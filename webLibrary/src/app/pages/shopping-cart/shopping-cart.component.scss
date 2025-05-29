@@ -1,4 +1,4 @@
-@use '../../../assets/scss/variables' as *; // Import global variables
+@use '../../../assets/scss/_variables.scss' as variables; // Import global variables
 
 .cart-container {
   padding: 20px;
@@ -6,9 +6,9 @@
 }
 
 .page-title {
-  font-family: $variables.$font-family-serif; // Usa tu variable serif
+  font-family: variables.$font-family-serif; // Usa tu variable serif
   font-size: 2.2em;
-  color: $variables.$primary; // Usa tu color primario
+  color: variables.$primary; // Usa tu color primario
   margin-bottom: 25px;
   text-align: center;
 }
@@ -39,7 +39,7 @@
     @media (max-width: 768px) { grid-area: image; }
   }
   .item-details {
-    .item-title { font-size: 1.1em; font-weight: 600; margin-bottom: 4px; text-decoration:none; color: inherit; &:hover{color: $variables.$primary;} }
+    .item-title { font-size: 1.1em; font-weight: 600; margin-bottom: 4px; text-decoration:none; color: inherit; &:hover{color: variables.$primary;} }
     .item-author { font-size: 0.9em; color: #666; margin-bottom: 4px; }
     .item-price-unit { font-size: 0.9em; color: #888; }
     @media (max-width: 768px) { grid-area: details; }
@@ -66,13 +66,13 @@
 .cart-summary {
   background-color: #f9f9f9;
   padding: 20px;
-  border-radius: $variables.$border-radius; // Usa tu variable de radio
+  border-radius: variables.$border-radius; // Usa tu variable de radio
   .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
     font-size: 1.1em;
-    &.total-row { font-weight: bold; font-size: 1.3em; color: $variables.$primary; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd; }
+    &.total-row { font-weight: bold; font-size: 1.3em; color: variables.$primary; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd; }
     .summary-value { font-weight: 600; }
   }
   .cart-actions {
@@ -91,7 +91,7 @@
   text-align: center;
   padding: 40px 20px;
   color: #777;
-  h2 { font-family: $variables.$font-family-serif; font-size: 1.8em; margin-bottom: 10px; }
+  h2 { font-family: variables.$font-family-serif; font-size: 1.8em; margin-bottom: 10px; }
   p { margin-bottom: 20px; }
 }
 

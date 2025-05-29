@@ -1,4 +1,4 @@
-@use '../../../assets/scss/variables' as *; // Si necesitas variables globales
+@use '../../../assets/scss/_variables.scss' as variables; // Si necesitas variables globales
 
 .checkout-container {
   padding: 20px;
@@ -7,9 +7,9 @@
 }
 
 .page-title {
-  font-family: $font-family-serif; // Usa tu variable serif
-  font-size: 2.2em;
-  color: $variables.$primary; // Usa tu color primario
+  font-family: variables.$font-family-serif; // Usa tu variable serif
+  font-size: 2.2em; 
+  color: variables.$primary; // Usa tu color primario
   margin-bottom: 25px;
   text-align: center;
 }
@@ -22,10 +22,6 @@
   @media (min-width: 992px) { // Dos columnas para pantallas más grandes
     grid-template-columns: 2fr 1fr; // Formularios a la izquierda, resumen a la derecha
   }
-}
-
-.checkout-forms {
-  // Estilos para el contenedor de los steppers/formularios
 }
 
 .form-grid {
@@ -47,13 +43,13 @@
   flex-direction: column;
   gap: 10px;
   margin: 15px 0;
-  .shipping-option, .payment-option {  
-    padding: $card-spacer/3; // Usar variable para padding
-    border: 1px solid #eee;
-    border-radius: $variables.$border-radius; // Usa tu variable
+  .shipping-option, .payment-option {
+    padding: variables.$card-spacer/3; // Usar variable para padding
+ border: 1px solid #eee; 
+    border-radius: variables.$border-radius; // Usa tu variable
     &.mat-mdc-radio-checked { // Estilo para la opción seleccionada
-      border-color: $primary;
-      background-color: rgba($primary, 0.05);
+      border-color: variables.$primary;
+      background-color: rgba(variables.$primary, 0.05);
     }
   }
 }
@@ -61,17 +57,17 @@
 .payment-details {
   padding: 10px;
   border: 1px dashed #ccc;  
-  border-radius: $variables.$border-radius;
+  border-radius: variables.$border-radius;
   .text-muted { color: #777; font-style: italic;}
 }
 
 .order-summary {
   .summary-title {
-    font-family: $font-family-serif;
+    font-family: variables.$font-family-serif;
     font-size: 1.5em;
     margin-bottom: 15px;
-    color: $primary;
-  }
+    color: variables.$primary;
+ }
   .summary-card {
     padding: 10px 0px; // Sin padding horizontal para que mat-list ocupe todo
   }
@@ -94,7 +90,7 @@
     .grand-total {
       font-size: 1.3em;
       font-weight: bold;
-      color: $variables.$primary;
+      color: variables.$primary;
       margin-top: 10px;  
       padding-top: 10px;
       border-top: 1px solid #ddd;
@@ -102,7 +98,7 @@
   }
   .empty-cart-summary {
      padding: 20px; text-align:center; color: #777;
-     a { color: $primary; text-decoration: none; &:hover { text-decoration: underline;}}\
+     a { color: variables.$primary; text-decoration: none; &:hover { text-decoration: underline;}}
   }
 }
 // Asegúrate que $primary, $font-family-serif, $border-radius estén disponibles

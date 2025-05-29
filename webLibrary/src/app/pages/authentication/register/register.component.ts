@@ -9,7 +9,6 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./auth.shared.scss'], // Usaremos el mismo SCSS compartido
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, MaterialModule, TablerIconsModule]
 })
