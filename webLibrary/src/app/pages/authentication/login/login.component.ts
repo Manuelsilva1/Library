@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-     if (this.authService.currentUserSubject.getValue()) {
+     if (this.authService.currentUserValue) {
          this.router.navigate(['/']); // Redirigir si ya está logueado
      }
   }

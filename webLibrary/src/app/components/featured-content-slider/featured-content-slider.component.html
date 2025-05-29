@@ -1,17 +1,13 @@
 <div class="featured-slider-container">
-  <swiper [config]="swiperConfig">
-    <ng-template swiperSlide *ngFor="let slide of slides; trackBy: trackById">
-      <div class="slide-content" [style.background-image]="'url(' + slide.imageUrl + ')'" [style.backgroundColor]="slide.backgroundColor || 'transparent'">
-        <div class="slide-overlay"> <!-- Capa para oscurecer un poco la imagen y mejorar legibilidad del texto -->
-          <div class="slide-text-content">
-            <h2>{{ slide.title }}</h2>
-            <p *ngIf="slide.subtitle">{{ slide.subtitle }}</p>
-            <a *ngIf="slide.actionText && slide.actionLink" [routerLink]="slide.actionLink" mat-raised-button color="primary" class="slide-action-button">
-              {{ slide.actionText }}
-            </a>
-          </div>
-        </div>
+  <div class="slide-content" *ngFor="let slide of slides; trackBy: trackById" [style.background-image]="'url(' + slide.imageUrl + ')'" [style.backgroundColor]="slide.backgroundColor || 'transparent'">
+    <div class="slide-overlay"> <!-- Capa para oscurecer un poco la imagen y mejorar legibilidad del texto -->
+      <div class="slide-text-content">
+        <h2>{{ slide.title }}</h2>
+        <p *ngIf="slide.subtitle">{{ slide.subtitle }}</p>
+        <a *ngIf="slide.actionText && slide.actionLink" [routerLink]="slide.actionLink" mat-raised-button color="primary" class="slide-action-button">
+          {{ slide.actionText }}
+        </a>
       </div>
-    </ng-template>
-  </swiper>
+    </div>
+  </div>
 </div>

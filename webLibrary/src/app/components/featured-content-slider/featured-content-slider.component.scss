@@ -1,9 +1,6 @@
-@import 'swiper/scss'; // Estilos base de Swiper
-@import 'swiper/scss/navigation'; // Estilos para navegación (flechas)
-@import 'swiper/scss/pagination'; // Estilos para paginación (puntos)
-// Importar variables globales si es necesario para $font-family-serif
+// Importar variables globales si es necesario
 // Si _variables.scss está en src/assets/scss/_variables.scss
-@import '../../../assets/scss/variables'; 
+@use '../../../assets/scss/variables' as *;
 
 .featured-slider-container {
   width: 100%;
@@ -69,13 +66,5 @@
       // Puedes añadir más especificidad si es necesario
       // ej. background-color: $accent-color; (si tienes una variable para el color de acento)
     }
-  }
-  
-  // Estilos para la navegación y paginación de Swiper (puedes personalizarlos)
-  :host { // Para aplicar estilos a los elementos de Swiper que están encapsulados
-     --swiper-navigation-color: #fff; // Color de las flechas
-     --swiper-pagination-color: #fff; // Color de los puntos de paginación activos
-     --swiper-pagination-bullet-inactive-color: #ccc;
-     --swiper-pagination-bullet-inactive-opacity: 0.5;
   }
 }

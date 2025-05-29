@@ -3,7 +3,7 @@
 
   <ng-container *ngIf="{ items: items$ | async, totalItems: totalItems$ | async, totalPrice: totalPrice$ | async } as cartData">
     <div *ngIf="cartData.items && cartData.items.length > 0; else emptyCart">
-      <div class="cart-items-list">
+      <div class="cart-items-list">\
         <mat-card *ngFor="let item of cartData.items" class="cart-item-card">
           <div class="item-layout">
             <div class="item-image">
@@ -68,13 +68,14 @@
         </button>
       </div>
 
-    </div>
+
+</div>\
+\
     <ng-template #emptyCart>
       <div class="empty-cart-message">
         <i-tabler name="shopping-cart-off" class="icon-64"></i-tabler>
       <h2>Tu carrito está vacío</h2>
       <p>Parece que no has añadido ningún libro todavía.</p>
       <a mat-stroked-button routerLink="/catalogo" color="primary">Explorar Catálogo</a>
-    </div>
-  </ng-template>
-</div>
+\
+

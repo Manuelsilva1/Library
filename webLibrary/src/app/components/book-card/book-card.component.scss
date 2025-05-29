@@ -1,4 +1,4 @@
-@import '../../../assets/scss/variables'; // Ajusta la ruta si _variables.scss está en otro lugar
+@use '../../../assets/scss/variables' as variables; // Ajusta la ruta si _variables.scss está en otro lugar
 
 .book-card {
   display: flex;
@@ -32,7 +32,7 @@ mat-card-header {
 }
 
 .book-title {
-  font-family: $font-family-serif; // Usar la variable serif
+  font-family: variables.$font-family-serif; // Usar la variable serif
   font-size: 1.1em;
   line-height: 1.3;
   // Truncar texto si es muy largo (opcional, requiere más CSS)
@@ -60,7 +60,7 @@ mat-card-header {
 .book-price {
   font-size: 1.2em;
   font-weight: bold;
-  color: $primary; // Usar el color primario de _variables.scss
+  color: variables.$primary; // Usar el color primario de _variables.scss
   margin-top: auto; // Empuja el precio hacia abajo si el título/autor es corto
 }
 
