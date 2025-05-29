@@ -1,0 +1,20 @@
+<mat-card class="book-card" *ngIf="book">
+  <a [routerLink]="['/libro', book.id]" class="book-card-link">
+    <img mat-card-image [src]="book.coverImageUrl" [alt]="book.title" class="book-cover-image">
+    <mat-card-header>
+      <mat-card-title class="book-title">{{ book.title }}</mat-card-title>
+      <mat-card-subtitle class="book-author">{{ book.author }}</mat-card-subtitle>
+    </mat-card-header>
+  </a>
+  <mat-card-content class="book-price-content">
+    <p class="book-price">
+      {{ book.price | currency:(book.currency || 'USD') }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions class="book-actions">
+    <button mat-flat-button color="primary" [routerLink]="['/libro', book.id]">Ver Detalles</button>
+    <button mat-icon-button color="accent" aria-label="Añadir al carrito" (click)="addToCart($event)">
+      <i-tabler name="shopping-cart-plus" class="icon-20"></i-tabler>
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,77 @@
+<div class="page-container">
+  <!-- 1. Slider de Libros Destacados -->
+  <app-featured-content-slider></app-featured-content-slider>
+
+  <!-- Sección de Novedades Editoriales -->
+  <section class="book-section margin-top-2">
+    <h2 class="section-title">Novedades Editoriales</h2>
+    <div class="books-grid">
+      <app-book-card *ngFor="let book of novedadesLibros" [book]="book" class="grid-item"></app-book-card>
+    </div>
+  </section>
+
+  <!-- Sección de Libros Más Vendidos -->
+  <section class="book-section margin-top-2">
+    <h2 class="section-title">Los Más Vendidos</h2>
+    <div class="books-grid">
+      <app-book-card *ngFor="let book of masVendidosLibros" [book]="book" class="grid-item"></app-book-card>
+    </div>
+  </section>
+
+  <!-- 3. Sección de Categorías -->
+  <section class="book-categories margin-top-2">
+    <h2 class="section-title">Explora por Categoría</h2>
+    <div class="categories-grid">
+      <button mat-raised-button color="accent" class="category-button">Novela</button>
+      <button mat-raised-button color="accent" class="category-button">Historia</button>
+      <button mat-raised-button color="accent" class="category-button">Infantil</button>
+      <button mat-raised-button color="accent" class="category-button">Autoayuda</button>
+      <button mat-raised-button color="accent" class="category-button">Ciencia Ficción</button>
+    </div>
+  </section>
+
+  <!-- 4. Testimonios de Clientes -->
+  <section class="customer-testimonials margin-top-2 mat-elevation-z1" style="background-color: #fafafa; padding: 20px;">
+    <h2 class="section-title">Nuestros Clientes Dicen</h2>
+    <div class="testimonials-container">
+      <div class="testimonial">
+        <p>"¡La mejor librería de la ciudad! Siempre encuentro lo que busco." - Cliente Satisfecho</p>
+      </div>
+      <div class="testimonial">
+        <p>"Un ambiente acogedor y una excelente selección de libros." - Lector Feliz</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Descripción de la Librería -->
+  <section class="library-description margin-top-2">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+      <div fxFlex="100" fxFlex.gt-sm="60">
+        <h2 class="section-title">Sobre Librería 33</h2>
+        <p>
+          Librería 33 es un espacio moderno y acogedor dedicado a los amantes de la lectura. 
+          Ofrecemos una cuidada selección de títulos de todos los géneros, un ambiente tranquilo 
+          para descubrir nuevas historias y un personal apasionado dispuesto a ayudarte a encontrar 
+          tu próxima lectura favorita.
+        </p>
+      </div>
+      <div fxFlex="100" fxFlex.gt-sm="35">
+        <!-- Placeholder para imagen del local/ambiente -->
+        <div style="height: 250px; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center;">
+          <p style="color: #777;">Imagen de la librería aquí</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Estilos básicos para placeholders (puedes moverlos a un archivo .scss después) -->
+<style>
+  .margin-top-2 { margin-top: 2em; }
+  .section-title { font-family: 'serif'; font-size: 2em; margin-bottom: 0.5em; color: #5D4037; } /* Ejemplo de color marrón */
+  .recommendations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1em; }
+  .book-card-placeholder { border: 1px solid #ccc; padding: 1em; text-align: center; background-color: #f9f9f9; }
+  .categories-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .category-button { background-color: #A1887F !important; color: white !important; } /* Ejemplo de color marrón claro para botones */
+  .testimonial { margin-bottom: 1em; font-style: italic; }
+</style>

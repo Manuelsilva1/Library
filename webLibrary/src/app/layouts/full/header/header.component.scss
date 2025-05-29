@@ -1,0 +1,25 @@
+@import '../../../../assets/scss/variables'; // Ajusta la ruta si es necesario
+
+.cart-badge {
+  position: absolute;
+  top: 8px; // Ajusta para tu ícono
+  right: 2px; // Ajusta para tu ícono
+  background-color: $accent; // Usa tu color de acento
+  color: white;
+  border-radius: 50%;
+  padding: 0px 5px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  line-height: 1.5;
+  min-width: 18px; // Para que el círculo se vea bien con 1 o 2 dígitos
+  text-align: center;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+// El botón mat-icon-button ya tiene position: relative por defecto o no lo necesita
+// si el span se posiciona correctamente dentro de él.
+// Si hay problemas, se puede añadir:
+// button[aria-label="Ver carrito de compras"] { position: relative; }

@@ -1,0 +1,81 @@
+@import 'swiper/scss'; // Estilos base de Swiper
+@import 'swiper/scss/navigation'; // Estilos para navegación (flechas)
+@import 'swiper/scss/pagination'; // Estilos para paginación (puntos)
+// Importar variables globales si es necesario para $font-family-serif
+// Si _variables.scss está en src/assets/scss/_variables.scss
+@import '../../../assets/scss/variables'; 
+
+.featured-slider-container {
+  width: 100%;
+  height: 400px; // Altura del slider, ajústala según necesites
+  margin-bottom: 20px;
+
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .slide-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    position: relative; 
+  }
+
+  .slide-overlay {
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.4); // Overlay oscuro para legibilidad
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     padding: 20px;
+     box-sizing: border-box;
+  }
+
+  .slide-text-content {
+    color: #fff; // Texto blanco sobre el overlay
+    max-width: 80%;
+
+    h2 {
+      font-size: 2.5em; // Ajusta según la tipografía serif
+      font-weight: 700;
+      margin-bottom: 0.5em;
+      font-family: $font-family-serif; // Usando la variable de _variables.scss
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 1.5em;
+    }
+
+    .slide-action-button {
+      // Estilos para el botón ya deberían venir de Material y los overrides globales
+      // Puedes añadir más especificidad si es necesario
+      // ej. background-color: $accent-color; (si tienes una variable para el color de acento)
+    }
+  }
+  
+  // Estilos para la navegación y paginación de Swiper (puedes personalizarlos)
+  :host { // Para aplicar estilos a los elementos de Swiper que están encapsulados
+     --swiper-navigation-color: #fff; // Color de las flechas
+     --swiper-pagination-color: #fff; // Color de los puntos de paginación activos
+     --swiper-pagination-bullet-inactive-color: #ccc;
+     --swiper-pagination-bullet-inactive-opacity: 0.5;
+  }
+}

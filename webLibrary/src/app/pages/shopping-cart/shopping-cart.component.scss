@@ -1,0 +1,105 @@
+@import '../../../assets/scss/variables'; // Import global variables
+
+.cart-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-family: $font-family-serif; // Usa tu variable serif
+  font-size: 2.2em;
+  color: $primary; // Usa tu color primario
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.cart-items-list {
+  margin-bottom: 20px;
+}
+
+.cart-item-card {
+  margin-bottom: 15px;
+  padding: 15px;
+  .item-layout {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto; // imagen, detalles, cantidad, precio total, acciones
+    gap: 15px;
+    align-items: center;
+    @media (max-width: 768px) {
+      grid-template-columns: auto 1fr; // imagen y el resto debajo o en 2 columnas
+      grid-template-areas: 
+       "image details"
+       "image quantity"
+       "image itemtotal"
+       ". actions";
+    }
+  }
+  .item-image {
+    img { width: 80px; height: 120px; object-fit: cover; border-radius: 4px;}
+    @media (max-width: 768px) { grid-area: image; }
+  }
+  .item-details {
+    .item-title { font-size: 1.1em; font-weight: 600; margin-bottom: 4px; text-decoration:none; color: inherit; &:hover{color: $primary;} }
+    .item-author { font-size: 0.9em; color: #666; margin-bottom: 4px;}
+    .item-price-unit { font-size: 0.9em; color: #888; }
+    @media (max-width: 768px) { grid-area: details; }
+  }
+  .item-quantity {
+     display: flex;
+     align-items: center;
+     .quantity-input { width: 40px; text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 5px;}
+     @media (max-width: 768px) { grid-area: quantity; justify-self: start; margin-top: 5px; }
+  }
+  .item-total-price {
+    font-weight: bold;
+    font-size: 1.1em;
+    min-width: 80px; text-align:right;
+    @media (max-width: 768px) { grid-area: itemtotal; justify-self: end; align-self: center; }
+  }
+  .item-actions {
+    @media (max-width: 768px) { grid-area: actions; justify-self: end; }
+  }
+}
+
+.section-divider { margin: 25px 0; }
+
+.cart-summary {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: $border-radius; // Usa tu variable de radio
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    &.total-row { font-weight: bold; font-size: 1.3em; color: $primary; margin-top:15px; padding-top:15px; border-top: 1px dashed #ddd;}
+    .summary-value { font-weight: 600; }
+  }
+  .cart-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    .checkout-button { font-size: 1.1em; padding: 10px 20px; }
+  }
+  .clear-cart-button { margin-top: 15px; display: block; margin-left:auto; }
+}
+
+.empty-cart-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #777;
+  .icon-64 { font-size: 64px; margin-bottom: 20px; display: block; margin-left:auto; margin-right:auto;}
+  h2 { font-family: $font-family-serif; font-size: 1.8em; margin-bottom: 10px; }
+  p { margin-bottom: 20px; }
+}
+
+// Fallbacks from prompt are removed as they should be provided by the @import
+// .icon-18, .icon-20 are utility classes that should be global or defined elsewhere
+// For this component, if they are only used here, they can be defined:
+.icon-18 { font-size: 18px; display: inline-block; vertical-align: middle; } 
+.icon-20 { font-size: 20px; display: inline-block; vertical-align: middle; }
+.icon-64 { font-size: 64px; display: inline-block; vertical-align: middle; }

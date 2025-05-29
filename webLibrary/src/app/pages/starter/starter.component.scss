@@ -1,0 +1,17 @@
+// (Asegúrate que .margin-top-2 y .section-title ya estén definidos globalmente o en el HTML como se hizo antes)
+// Si no, puedes añadirlos aquí o referenciar el archivo SCSS global
+// @import '../../../assets/scss/variables'; // si necesitas variables de aquí
+
+.book-section {
+  margin-bottom: 2em; // Espacio debajo de cada sección de libros
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); // Ajusta 220px al ancho deseado de la tarjeta
+  gap: 20px; // Espacio entre tarjetas
+}
+
+.grid-item {
+  min-width: 0; // Necesario para que el grid funcione bien con elementos flex como mat-card
+}

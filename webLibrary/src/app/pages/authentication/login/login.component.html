@@ -1,0 +1,39 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Iniciar Sesión en Librería 33</mat-card-title>
+      <i-tabler name="login" class="auth-icon" mat-card-avatar></i-tabler>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput type="email" formControlName="email" required>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Correo es requerido</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Correo inválido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" formControlName="password" required>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Contraseña es requerida</mat-error>
+        </mat-form-field>
+
+        <!-- <mat-checkbox formControlName="rememberMe" class="full-width">Recordarme</mat-checkbox> -->
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <button mat-flat-button color="primary" type="submit" class="full-width auth-button" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Iniciar Sesión</span>
+          <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+        </button>
+      </form>
+    </mat-card-content>
+    <mat-card-actions class="auth-actions">
+      <!-- <a mat-button routerLink="/forgot-password">¿Olvidaste tu contraseña?</a> -->
+      <p>¿No tienes cuenta? <a mat-button color="accent" routerLink="/registro">Regístrate aquí</a></p>
+    </mat-card-actions>
+  </mat-card>
+</div>

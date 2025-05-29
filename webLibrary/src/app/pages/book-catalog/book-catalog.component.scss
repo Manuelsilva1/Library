@@ -1,0 +1,72 @@
+// Importar estilos globales o variables si es necesario
+@import '../../../assets/scss/variables'; // Ajusta si _variables.scss está en otra parte
+
+.catalog-container {
+  padding: 20px;
+}
+
+.page-title {
+  font-family: $font-family-serif; // Asegurar que se usa la variable serif
+  font-size: 2.5em;
+  color: $primary; // Usar color primario
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filters-panel {
+  margin-bottom: 20px;
+}
+
+.filters-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px 0; // Padding vertical para el contenido del panel
+}
+
+.filter-item {
+  flex: 1 1 200px; // Permite que los filtros se ajusten y crezcan
+  min-width: 200px;
+}
+
+.price-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  .price-filter-label {
+    margin-right: 8px;
+    font-size: 0.95em;
+  }
+  .price-input {
+    max-width: 80px;
+  }
+  .price-separator {
+    font-size: 1.2em;
+  }
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.grid-item {
+  min-width: 0;
+}
+
+.margin-top-2 { margin-top: 2em; }
+
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #777; // Un color más suave para el mensaje
+  .icon-48 { 
+    font-size: 48px; // Asegura que el tamaño del icono sea el correcto
+    display: block; // Para centrarlo
+    margin: 0 auto 16px auto; // Margen inferior y centrado horizontal
+  }
+}
+
+.m-r-8 { margin-right: 8px; }
+.m-b-16 { margin-bottom: 16px; }

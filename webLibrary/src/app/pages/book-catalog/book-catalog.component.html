@@ -1,0 +1,83 @@
+<div class="catalog-container">
+  <h1 class="page-title">Catálogo de Libros</h1>
+
+  <!-- Filtros -->
+  <mat-expansion-panel class="filters-panel" [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <i-tabler name="filter" class="icon-20 m-r-8"></i-tabler> Filtrar Resultados
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="filters-content">
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Buscar por título, autor, descripción...</mat-label>
+        <input matInput type="text" placeholder="Ej: El Quijote" (input)="onSearchTermInput($event)">
+        <i-tabler name="search" matSuffix class="icon-20"></i-tabler>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Autor</mat-label>
+        <input matInput type="text" placeholder="Ej: Miguel de Cervantes" (input)="onAuthorInput($event)" [value]="filters.author || ''">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Categoría</mat-label>
+        <mat-select (selectionChange)="applyCategoryFilter($event.value)" [value]="filters.category || ''">
+          <mat-option value="">Todas</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filter-item price-filter">
+         <span class="price-filter-label">Precio:</span>
+         <mat-form-field appearance="outline" class="price-input">
+             <mat-label>Mín.</mat-label>
+             <input matInput type="number" placeholder="0" [(ngModel)]="priceMinFilter" (input)="applyPriceFilter()">
+         </mat-form-field>
+         <span class="price-separator">-</span>
+         <mat-form-field appearance="outline" class="price-input">
+             <mat-label>Máx.</mat-label>
+             <input matInput type="number" placeholder="200" [(ngModel)]="priceMaxFilter" (input)="applyPriceFilter()">
+         </mat-form-field>
+         <button mat-icon-button (click)="clearPriceFilter()" matTooltip="Limpiar filtro de precio">
+             <i-tabler name="clear-all" class="icon-20"></i-tabler>
+         </button>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Paginador Superior -->
+  <mat-paginator 
+     *ngIf="books.length > 0 || totalBooks > 0"
+     [length]="totalBooks"
+     [pageSize]="pageSize"
+     [pageSizeOptions]="pageSizeOptions"
+     (page)="handlePageEvent($event)"
+     aria-label="Seleccionar página">
+  </mat-paginator>
+  
+  <!-- Lista de Libros -->
+  <div *ngIf="books.length > 0; else noBooksFound" class="books-grid margin-top-2">
+    <app-book-card *ngFor="let book of books" [book]="book" class="grid-item"></app-book-card>
+  </div>
+  <ng-template #noBooksFound>
+    <div class="no-results margin-top-2">
+      <i-tabler name="mood-empty" class="icon-48 m-b-16"></i-tabler>
+      <p>No se encontraron libros con los filtros seleccionados.</p>
+    </div>
+  </ng-template>
+
+  <!-- Paginador Inferior -->
+  <mat-paginator
+     *ngIf="books.length > 0 || totalBooks > 0"
+     [length]="totalBooks"
+     [pageSize]="pageSize"
+     [pageSizeOptions]="pageSizeOptions"
+     (page)="handlePageEvent($event)"
+     aria-label="Seleccionar página"
+     class="margin-top-2">
+  </mat-paginator>
+</div>

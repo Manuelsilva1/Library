@@ -1,0 +1,73 @@
+@import '../../../assets/scss/variables'; // Ajusta la ruta si _variables.scss está en otro lugar
+
+.book-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Para que todas las tarjetas en una fila tengan la misma altura si se usa un grid
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+}
+
+.book-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; // Para que el enlace ocupe el espacio disponible y empuje las acciones hacia abajo
+}
+
+.book-cover-image {
+  width: 100%;
+  aspect-ratio: 2 / 3; // Proporción común para portadas de libros
+  object-fit: cover; // o 'contain' si prefieres ver toda la portada
+}
+
+mat-card-header {
+  padding: 16px 16px 8px 16px; // Menos padding inferior para acercar al precio
+}
+
+.book-title {
+  font-family: $font-family-serif; // Usar la variable serif
+  font-size: 1.1em;
+  line-height: 1.3;
+  // Truncar texto si es muy largo (opcional, requiere más CSS)
+  display: -webkit-box;
+  -webkit-line-clamp: 2; // Número de líneas a mostrar
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.6em; // Aproximadamente 2 líneas
+}
+
+.book-author {
+  font-size: 0.9em;
+  color: #666;
+  // Truncar si es necesario
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-price-content {
+   padding: 0px 16px 8px 16px; // Ajustar padding
+}
+
+.book-price {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: $primary; // Usar el color primario de _variables.scss
+  margin-top: auto; // Empuja el precio hacia abajo si el título/autor es corto
+}
+
+.book-actions {
+  padding: 8px 16px 16px 16px; // Ajustar padding
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto; // Asegura que las acciones estén al final
+}

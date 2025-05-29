@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="330" viewBox="0 0 220 330">
+  <rect width="100%" height="100%" fill="#A1887F"/> <!-- Marrón Claro -->
+  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="#FFF">
+    Libro Genérico 1
+  </text>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="#FFF">
+    (Portada Placeholder)
+  </text>
+</svg>

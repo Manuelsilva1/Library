@@ -1,0 +1,83 @@
+<div class="book-detail-container" *ngIf="!isLoading; else loadingState">
+  <div *ngIf="book; else notFoundState" class="content-wrapper">
+    
+    <div class="breadcrumb">
+      <a routerLink="/catalogo">Catálogo</a> / <span>{{ book.title }}</span>
+    </div>
+
+    <div class="main-content-grid">
+      <!-- Columna de Imagen -->
+      <div class="image-column">
+        <img [src]="book.coverImageUrl" [alt]="book.title" class="main-book-cover">
+        <!-- Miniaturas de imágenes adicionales (si existen) -->
+        <div class="additional-images" *ngIf="book.additionalImageUrls && book.additionalImageUrls.length > 0">
+          <img *ngFor="let imgUrl of book.additionalImageUrls" [src]="imgUrl" [alt]="book.title + ' adicional'" class="thumbnail-image">
+        </div>
+      </div>
+
+      <!-- Columna de Información y Compra -->
+      <div class="info-column">
+        <h1 class="book-title">{{ book.title }}</h1>
+        <p class="book-author">por <a href="#">{{ book.author }}</a></p> <!-- Enlace al autor si se implementa página de autor -->
+        
+        <div class="book-meta-info">
+          <span class="book-price">{{ book.price | currency:(book.currency || 'USD') }}</span>
+          <mat-chip-listbox aria-label="Categoría del libro">
+             <mat-chip *ngIf="book.category" color="accent" selected>{{book.category}}</mat-chip>
+          </mat-chip-listbox>
+        </div>
+
+        <div class="stock-info" [ngClass]="{
+           'available': stockStatus === 'Disponible',
+           'low-stock': stockStatus === 'Pocos disponibles',
+           'out-of-stock': stockStatus === 'Agotado'
+         }">
+          <i-tabler name="package" class="icon-20"></i-tabler> {{ stockStatus }} <span *ngIf="stockStatus !== 'Agotado'">({{stockQuantity}} unidades)</span>
+        </div>
+
+        <div class="actions-section">
+          <!-- Selector de cantidad (opcional, se puede añadir después) -->
+          <button mat-flat-button color="primary" class="add-to-cart-button" (click)="addToCart()" [disabled]="stockStatus === 'Agotado'">
+            <i-tabler name="shopping-cart-plus" class="icon-20"></i-tabler> Añadir al Carrito
+          </button>
+          <!-- Otros botones como "Añadir a lista de deseos" podrían ir aquí -->
+        </div>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <div class="book-description">
+          <h3>Descripción</h3>
+          <p [innerHTML]="book.shortDescription || 'No hay descripción disponible.'"></p> <!-- Usar innerHTML con precaución si la descripción puede tener HTML -->
+        </div>
+      </div>
+
+      <!-- Columna de Detalles Adicionales (opcional) -->
+      <div class="details-column" *ngIf="book.publisher || book.publishDate || book.pages || book.isbn || book.language">
+         <h3>Detalles del Producto</h3>
+         <ul class="details-list">
+             <li *ngIf="book.isbn"><strong>ISBN:</strong> {{book.isbn}}</li>
+             <li *ngIf="book.publisher"><strong>Editorial:</strong> {{book.publisher}}</li>
+             <li *ngIf="book.publishDate"><strong>Fecha de publicación:</strong> {{book.publishDate | date:'longDate'}}</li>
+             <li *ngIf="book.pages"><strong>Número de páginas:</strong> {{book.pages}}</li>
+             <li *ngIf="book.language"><strong>Idioma:</strong> {{book.language}}</li>
+         </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="loading-spinner-container">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Cargando detalles del libro...</p>
+  </div>
+</ng-template>
+
+<ng-template #notFoundState>
+  <div class="not-found-container">
+     <i-tabler name="error-404" class="icon-64"></i-tabler>
+    <h2>Libro no encontrado</h2>
+    <p>El libro que buscas no existe o no está disponible.</p>
+    <a mat-stroked-button routerLink="/catalogo">Volver al Catálogo</a>
+  </div>
+</ng-template>

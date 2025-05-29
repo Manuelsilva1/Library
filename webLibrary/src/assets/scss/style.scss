@@ -1,0 +1,34 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+
+@use "themecolors/blue_theme";
+
+@use "variables" as *;
+@use "override-component";
+@use "theme-variables/default-variables";
+@use "theme-variables/light-theme-variables";
+
+//container layout
+@use "layouts/transitions";
+@use "helpers/color";
+@use "helpers/border-color";
+@use "helpers/icon-size";
+@use "container";
+@use "layouts/layouts";
+@use "grid/grid";
+@use "helpers/custom-flex";
+@use "helpers";
+
+// pages
+@use "pages/auth";
+@use "pages/dashboards";
+
+h1, h2, h3, h4, h5, h6, .section-title {
+  font-family: $font-family-serif; // Usando la variable definida en _variables.scss
+}
+
+// Ajuste para los títulos dentro del contenido de la librería que ya hemos creado
+.page-container .section-title {
+    font-family: $font-family-serif; // Asegura que se aplique
+    // Puedes añadir más estilos específicos para .section-title aquí si es necesario
+}

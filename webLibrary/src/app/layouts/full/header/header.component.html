@@ -1,0 +1,61 @@
+<mat-toolbar class="topbar gap-10">
+
+  <app-branding></app-branding>
+
+  <!-- Mobile Menu -->
+  
+  <button mat-icon-button (click)="toggleMobileNav.emit()" class="d-flex d-lg-none justify-content-center">
+    <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
+  </button>
+
+  <!-- Search Bar -->
+  <div class="search-bar-container" style="flex-grow: 0.5; margin: 0 15px;">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Buscar libros...</mat-label>
+      <input matInput type="text" placeholder="Título, autor, ISBN...">
+      <button mat-icon-button matSuffix aria-label="Buscar">
+        <i-tabler name="search" class="icon-20"></i-tabler>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <!-- Cart Icon -->
+  <button mat-icon-button routerLink="/carrito" aria-label="Ver carrito de compras" class="m-r-5" style="position: relative;">
+    <i-tabler name="shopping-cart" class="icon-20"></i-tabler>
+    <span *ngIf="totalCartItems$ | async as totalItems" class="cart-badge" [class.hidden]="totalItems === 0">
+      {{ totalItems }}
+    </span>
+  </button>
+
+  <span class="flex-1-auto"></span>
+
+  <ng-container *ngIf="currentUser$ | async as user; else showLoginButton">
+    <button mat-button [matMenuTriggerFor]="userProfileMenu">
+      <i-tabler name="user-circle" class="icon-20 m-r-5"></i-tabler>
+      Hola, {{ user.fullName || user.email }}
+      <i-tabler name="chevron-down" class="icon-18 m-l-5"></i-tabler>
+    </button>
+    <mat-menu #userProfileMenu="matMenu">
+      <button mat-menu-item routerLink="/perfil"> <!-- Crear página de perfil después -->
+        <i-tabler name="user" class="icon-18 m-r-8"></i-tabler>Mi Perfil
+      </button>
+      <button mat-menu-item routerLink="/mis-pedidos"> <!-- Crear página de pedidos después -->
+        <i-tabler name="truck-delivery" class="icon-18 m-r-8"></i-tabler>Mis Pedidos
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <i-tabler name="logout" class="icon-18 m-r-8"></i-tabler>Cerrar Sesión
+      </button>
+    </mat-menu>
+  </ng-container>
+
+  <ng-template #showLoginButton>
+    <button mat-stroked-button routerLink="/login" class="m-l-5">
+      <i-tabler name="login" class="icon-20 m-r-5"></i-tabler>
+      Iniciar Sesión
+    </button>
+    <button mat-flat-button color="primary" routerLink="/registro" class="m-l-5">
+      Registrarse
+    </button>
+  </ng-template>
+</mat-toolbar>

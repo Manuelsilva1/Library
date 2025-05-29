@@ -1,0 +1,118 @@
+<app-topstrip></app-topstrip>
+<div class="blue_theme light-theme" autosize autoFocus dir="ltr">
+  <!-- ============================================================== -->
+  <!-- VerticalHeader -->
+  <!-- ============================================================== -->
+
+  <app-header [showToggle]="!isOver" (toggleMobileNav)="sidenav.toggle()"></app-header>
+
+  <mat-sidenav-container class="mainWrapper">
+    <!-- ============================================================== -->
+    <!-- Vertical Sidebar -->
+    <!-- ============================================================== -->
+    <mat-sidenav #leftsidenav [mode]="isOver ? 'over' : 'side'" [opened]="!isOver"
+      (openedChange)="onSidenavOpenedChange($event)" (closedStart)="onSidenavClosedStart()" class="sidebarNav">
+      <div class="flex-layout">
+        <app-sidebar (toggleMobileNav)="sidenav.toggle()" [showToggle]="isOver"></app-sidebar>
+        <ng-scrollbar class="position-relative" style="height: 100%">
+          <mat-nav-list class="sidebar-list">
+            @for(item of navItems; track item) {
+            <app-nav-item [item]="item" (notify)="sidenav.toggle()">
+            </app-nav-item>
+            }
+          </mat-nav-list>
+        </ng-scrollbar>
+        <div class="p-20">
+          <div class="bg-light-secondary d-flex align-items-center gap-4 rounded p-20 m-t-20">
+            <div>
+              <h5 class="f-s-16 f-w-600 m-b-8"> Check Pro <br> Version </h5><a mat-flat-button=""
+                href="https://www.wrappixel.com/templates/materialpro-angular-dashboard/?ref=376#demos" target="_blank"
+                class="d-flex justify-content-center bg-secondary mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-unthemed mat-mdc-button-base"
+                mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple"><span
+                  class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label">
+                  Check </span><span class="mat-focus-indicator"></span><span
+                  class="mat-mdc-button-touch-target"></span></a>
+            </div><img src="/assets/images/backgrounds/rocket.png" alt="imgae" class="side-img m-t--48 m-r--8">
+          </div>
+        </div>
+      </div>
+    </mat-sidenav>
+
+    <!-- ============================================================== -->
+    <!-- Main Content -->
+    <!-- ============================================================== -->
+    <mat-sidenav-content class="contentWrapper" #content>
+
+      <main class="pageWrapper maxWidth">
+        <!-- ============================================================== -->
+        <!-- Outlet -->
+        <!-- ============================================================== -->
+        <router-outlet></router-outlet>
+      </main>
+
+      <!-- ============================================================== -->
+      <!-- Footer - Librería 33 -->
+      <!-- ============================================================== -->
+      <footer class="libreria-footer mat-elevation-z4" style="background-color: #F5F5F5; padding: 30px 20px; border-top: 1px solid #e0e0e0;">
+        <div class="footer-container" fxLayout="row wrap" fxLayoutAlign="space-around start" fxLayoutGap="20px grid">
+
+          <!-- Columna 1: Enlaces Rápidos -->
+          <div fxFlex="100" fxFlex.gt-sm="22">
+            <h4 class="footer-section-title">Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a routerLink="/">Inicio</a></li>
+              <li><a routerLink="/catalogo">Catálogo</a></li>
+              <li><a routerLink="/ofertas">Ofertas</a></li>
+              <li><a routerLink="/autores">Autores</a></li>
+              <li><a routerLink="/contacto">Contacto</a></li>
+              <li><a routerLink="/faq">Preguntas Frecuentes</a></li>
+              <li><a routerLink="/politica-privacidad">Política de Privacidad</a></li>
+            </ul>
+          </div>
+
+          <!-- Columna 2: Redes Sociales y Contacto -->
+          <div fxFlex="100" fxFlex.gt-sm="22">
+            <h4 class="footer-section-title">Síguenos</h4>
+            <div class="social-icons">
+              <!-- Reemplazar # con enlaces reales y añadir iconos SVG o de fuentes si es posible -->
+              <a href="#" aria-label="Facebook" class="social-icon"><i-tabler name="brand-facebook" style="width:24px; height:24px;"></i-tabler></a>
+              <a href="#" aria-label="Twitter" class="social-icon"><i-tabler name="brand-twitter" style="width:24px; height:24px;"></i-tabler></a>
+              <a href="#" aria-label="Instagram" class="social-icon"><i-tabler name="brand-instagram" style="width:24px; height:24px;"></i-tabler></a>
+            </div>
+            <h4 class="footer-section-title" style="margin-top: 20px;">Contacto</h4>
+            <p class="contact-info">
+              Calle Falsa 123, Ciudad<br>
+              Tel: (555) 123-4567<br>
+              Email: info@libreria33.com
+            </p>
+          </div>
+
+          <!-- Columna 3: Suscripción al Boletín -->
+          <div fxFlex="100" fxFlex.gt-sm="45">
+            <h4 class="footer-section-title">Suscríbete a Nuestro Boletín</h4>
+            <p>Recibe novedades, ofertas especiales y recomendaciones directamente en tu correo.</p>
+            <form class="newsletter-form">
+              <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Tu correo electrónico</mat-label>
+                <input matInput type="email" placeholder="ejemplo@correo.com">
+                <button mat-icon-button matSuffix color="primary" aria-label="Suscribirse">
+                  <i-tabler name="send" class="icon-20"></i-tabler>
+                </button>
+              </mat-form-field>
+              <button mat-raised-button color="primary" type="submit" style="width: 100%;">Suscribirse</button>
+            </form>
+          </div>
+
+        </div>
+        <div class="footer-bottom" style="text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+          <p>&copy; {{currentYear}} Librería 33. Todos los derechos reservados.</p>
+        </div>
+      </footer>
+      <!-- ============================================================== -->
+      <!-- End Footer -->
+      <!-- ============================================================== -->
+
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>
