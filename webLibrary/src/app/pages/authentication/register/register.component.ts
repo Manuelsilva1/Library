@@ -58,9 +58,11 @@ export class RegisterComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     this.successMessage = null;
-    const { fullName, email, password } = this.registerForm.value;
+    // const { fullName, email, password } = this.registerForm.value; // Old way
+    const userData = this.registerForm.value; // New way, sends {fullName, email, password, confirmPassword}
+                                              // The service will only use fullName, email, password
 
-    this.authService.register(fullName, email, password).subscribe({
+    this.authService.register(userData).subscribe({
       next: (user) => {
         this.isLoading = false;
         this.successMessage = `¡Registro exitoso para ${user.fullName}! Ahora puedes iniciar sesión.`;

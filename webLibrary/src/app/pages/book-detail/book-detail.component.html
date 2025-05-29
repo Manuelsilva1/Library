@@ -28,16 +28,18 @@
         </div>
 
         <div class="stock-info" [ngClass]="{
-           'available': stockStatus === 'Disponible',
-           'low-stock': stockStatus === 'Pocos disponibles',
-           'out-of-stock': stockStatus === 'Agotado'
-         }">
-          <i-tabler name="package" class="icon-20"></i-tabler> {{ stockStatus }} <span *ngIf="stockStatus !== 'Agotado'">({{stockQuantity}} unidades)</span>
+           'available': book.stock !== undefined && book.stock > 5,
+           'low-stock': book.stock !== undefined && book.stock > 0 && book.stock <= 5,
+           'out-of-stock': book.stock === undefined || book.stock === 0
+         }" *ngIf="book && book.stock !== undefined">
+          <i-tabler name="package" class="icon-20"></i-tabler> 
+          <span *ngIf="book.stock !== undefined && book.stock > 0">Disponible: {{book.stock}} unidades</span>
+          <span *ngIf="book.stock === 0">Agotado</span>
         </div>
-
+        
         <div class="actions-section">
           <!-- Selector de cantidad (opcional, se puede añadir después) -->
-          <button mat-flat-button color="primary" class="add-to-cart-button" (click)="addToCart()" [disabled]="stockStatus === 'Agotado'">
+          <button mat-flat-button color="primary" class="add-to-cart-button" (click)="addToCart()" [disabled]="!book || book.stock === undefined || book.stock === 0">
             <i-tabler name="shopping-cart-plus" class="icon-20"></i-tabler> Añadir al Carrito
           </button>
           <!-- Otros botones como "Añadir a lista de deseos" podrían ir aquí -->

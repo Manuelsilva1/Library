@@ -42,6 +42,9 @@
       <button mat-menu-item routerLink="/mis-pedidos"> <!-- Crear página de pedidos después -->
         <i-tabler name="truck-delivery" class="icon-18 m-r-8"></i-tabler>Mis Pedidos
       </button>
+      <button mat-menu-item routerLink="/admin/books" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <i-tabler name="settings" class="icon-18 m-r-8"></i-tabler>Admin Libros
+      </button>
       <mat-divider></mat-divider>
       <button mat-menu-item (click)="logout()">
         <i-tabler name="logout" class="icon-18 m-r-8"></i-tabler>Cerrar Sesión

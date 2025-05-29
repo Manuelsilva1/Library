@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'; // Import OnDestroy
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Para los filtros
-import { MaterialModule } from 'src/app/material.module'; // Para UI de filtros y paginador
-import { BookCardComponent } from '../../components/book-card/book-card.component'; // Ajusta ruta
-import { BookService, Filters } from '../../services/book.service'; // Ajusta ruta
-import { Book } from '../../models/book.model'; // Ajusta ruta
-import { PageEvent } from '@angular/material/paginator'; // Para el paginador
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import FormBuilder, FormGroup
+import { MaterialModule } from 'src/app/material.module';
+import { BookCardComponent } from '../../components/book-card/book-card.component';
+import { BookService, Filters } from '../../services/book.service';
+import { Book } from '../../models/book.model';
+import { PageEvent } from '@angular/material/paginator';
+import { Subject, Subscription } from 'rxjs'; // Import Subscription
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TablerIconsModule } from 'angular-tabler-icons';
 
 
@@ -31,93 +31,125 @@ export class BookCatalogComponent implements OnInit {
   categories: string[] = [];
   
   // Filtros
-  filters: Filters = {};
-  authorSearch$ = new Subject<string>();
-  searchTerm$ = new Subject<string>();
+  filterForm: FormGroup;
+  // filters: Filters = {}; // Reemplazado por filterForm
+  // authorSearch$ = new Subject<string>(); // Reemplazado por filterForm
+  // searchTerm$ = new Subject<string>(); // Reemplazado por filterForm
 
   // Paginación
   totalBooks = 0;
   pageSize = 8;
-  currentPage = 1;
+  currentPage = 1; // BookService espera 1-indexed
   pageSizeOptions = [4, 8, 12, 24];
 
-  // Para el slider de precio (opcional, si se implementa)
-  priceMinFilter: number = 0;
-  priceMaxFilter: number = 200; // Un máximo inicial alto
+  // Estado de carga y errores
+  isLoadingBooks = false;
+  isLoadingCategories = false;
+  booksError: string | null = null;
+  categoriesError: string | null = null;
+  
+  private destroy$ = new Subject<void>(); // Para desuscripciones
 
-  constructor(private bookService: BookService) { }
-
-  ngOnInit(): void {
-    this.loadBooks();
-    this.loadCategories();
-
-    this.authorSearch$.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(authorName => {
-      this.filters.author = authorName || undefined; // Set to undefined if empty
-      this.applyFiltersAndLoadBooks();
-    });
-
-    this.searchTerm$.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(searchTerm => {
-      this.filters.searchTerm = searchTerm || undefined; // Set to undefined if empty
-      this.applyFiltersAndLoadBooks();
+  constructor(
+    private bookService: BookService,
+    private fb: FormBuilder // Inyectar FormBuilder
+  ) {
+    this.filterForm = this.fb.group({
+      category: [''],
+      author: [''],
+      priceMin: [null],
+      priceMax: [null],
+      searchTerm: ['']
     });
   }
 
-  loadBooks(): void {
-    this.bookService.getBooks(this.filters, this.currentPage, this.pageSize)
-      .subscribe(response => {
-        this.books = response.books;
-        this.totalBooks = response.total;
+  ngOnInit(): void {
+    this.loadCategories(); // Cargar categorías para el select
+    this.applyFilters(); // Cargar libros con filtros iniciales (vacíos)
+
+    // Escuchar cambios en el formulario para aplicar filtros automáticamente (con debounce)
+    this.filterForm.valueChanges.pipe(
+      debounceTime(500), // Esperar 500ms después del último cambio
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)), // Solo emitir si el valor realmente cambió
+      takeUntil(this.destroy$) // Desuscribirse cuando el componente se destruya
+    ).subscribe(values => {
+      this.applyFilters();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadBooks(filters: Filters): void {
+    this.isLoadingBooks = true;
+    this.booksError = null;
+    // BookService espera página 1-indexed
+    this.bookService.getBooks(filters, this.currentPage, this.pageSize)
+      .subscribe({
+        next: response => {
+          this.books = response.books;
+          this.totalBooks = response.total;
+          this.isLoadingBooks = false;
+        },
+        error: err => {
+          this.booksError = err.message || 'Error al cargar los libros.';
+          this.isLoadingBooks = false;
+          this.books = [];
+          this.totalBooks = 0;
+        }
       });
   }
 
   loadCategories(): void {
-    this.bookService.getCategories().subscribe(cats => this.categories = cats);
+    this.isLoadingCategories = true;
+    this.categoriesError = null;
+    this.bookService.getCategories().subscribe({
+      next: cats => {
+        this.categories = cats;
+        this.isLoadingCategories = false;
+      },
+      error: err => {
+        this.categoriesError = err.message || 'Error al cargar las categorías.';
+        this.isLoadingCategories = false;
+        this.categories = [];
+      }
+    });
   }
 
-  onAuthorInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.authorSearch$.next(inputElement.value);
-  }
- 
-  onSearchTermInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.searchTerm$.next(inputElement.value);
+  applyFilters(): void {
+    this.currentPage = 1; // Reset page to 1 when filters change
+    const rawFilters = this.filterForm.value;
+    
+    // Clean up filters: remove null, undefined, or empty string values
+    const activeFilters: Filters = {};
+    Object.entries(rawFilters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && String(value).trim() !== '') {
+        activeFilters[key as keyof Filters] = value as any;
+      }
+    });
+
+    this.loadBooks(activeFilters);
   }
 
-  applyCategoryFilter(category?: string): void {
-    this.filters.category = category || undefined; // Set to undefined if '' (Todas)
-    this.applyFiltersAndLoadBooks();
-  }
-
-  applyPriceFilter(): void {
-     // Validar que min no sea mayor que max, etc.
-     this.filters.priceMin = this.priceMinFilter > 0 ? this.priceMinFilter : undefined;
-     this.filters.priceMax = this.priceMaxFilter > 0 && this.priceMaxFilter > (this.filters.priceMin || 0) ? this.priceMaxFilter : undefined;
-     this.applyFiltersAndLoadBooks();
-  }
- 
-  clearPriceFilter(): void {
-     this.priceMinFilter = 0;
-     this.priceMaxFilter = 200;
-     this.filters.priceMin = undefined;
-     this.filters.priceMax = undefined;
-     this.applyFiltersAndLoadBooks();
-  }
-
-  applyFiltersAndLoadBooks(): void {
-    this.currentPage = 1; // Resetear a la primera página con nuevos filtros
-    this.loadBooks();
+  clearFilters(): void {
+    this.filterForm.reset({
+      category: '',
+      author: '',
+      priceMin: null,
+      priceMax: null,
+      searchTerm: ''
+    });
+    // applyFilters() will be triggered by valueChanges if form is dirty,
+    // or call it explicitly if needed after reset if valueChanges isn't triggered.
+    // this.applyFilters(); // Explicitly call if reset doesn't trigger valueChanges or for immediate effect
   }
 
   handlePageEvent(event: PageEvent): void {
-    this.currentPage = event.pageIndex + 1;
+    this.currentPage = event.pageIndex + 1; // MatPaginator is 0-indexed
     this.pageSize = event.pageSize;
-    this.loadBooks();
+    // Filters are taken from the form, so just load books for the new page
+    this.loadBooks(this.filterForm.value as Filters);
   }
 }
