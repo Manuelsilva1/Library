@@ -14,6 +14,8 @@ import {
   withComponentInputBinding,
   withInMemoryScrolling,
 } from '@angular/router';
+import { withInterceptors } from '@angular/common/http'; // Import withInterceptors
+import { jwtInterceptor } from './interceptors/jwt.interceptor'; // Import the functional interceptor
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideClientHydration } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -41,7 +43,7 @@ export const appConfig: ApplicationConfig = {
       }),
       withComponentInputBinding()
     ),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([jwtInterceptor])), // Use withInterceptors
     provideClientHydration(),
     provideAnimationsAsync(),
     importProvidersFrom(

@@ -1,5 +1,5 @@
 export interface Book {
-  id: string; // o number
+  id: number; // Changed from string to number to match backend Long
   title: string;
   author: string;
   coverImageUrl: string;
@@ -13,5 +13,6 @@ export interface Book {
   isbn?: string;
   language?: string;
   additionalImageUrls?: string[];
+  stock?: number; // Campo para el stock
   // Podrías añadir más campos como rating, ISBN, etc.
 }

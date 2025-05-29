@@ -1,72 +1,77 @@
-<div class="cart-container" *ngIf="cart$ | async as cart">
+<div class="cart-container">
   <h1 class="page-title">Tu Carrito de Compras</h1>
 
-  <div *ngIf="cart.items.length > 0; else emptyCart">
-    <div class="cart-items-list">
-      <mat-card *ngFor="let item of cart.items" class="cart-item-card">
-        <div class="item-layout">
-          <div class="item-image">
-            <a [routerLink]="item.productUrl || ['/libro', item.bookId]">
-              <img [src]="item.coverImageUrl" [alt]="item.title">
-            </a>
+  <ng-container *ngIf="{ items: items$ | async, totalItems: totalItems$ | async, totalPrice: totalPrice$ | async } as cartData">
+    <div *ngIf="cartData.items && cartData.items.length > 0; else emptyCart">
+      <div class="cart-items-list">
+        <mat-card *ngFor="let item of cartData.items" class="cart-item-card">
+          <div class="item-layout">
+            <div class="item-image">
+              <a [routerLink]="['/libro', item.book.id]">
+                <img [src]="item.book.coverImageUrl || 'assets/images/default-cover.png'" [alt]="item.book.title">
+              </a>
+            </div>
+            <div class="item-details">
+              <a [routerLink]="['/libro', item.book.id]">
+                <h3 class="item-title">{{ item.book.title }}</h3>
+              </a>
+              <p class="item-author">por {{ item.book.author }}</p>
+              <p class="item-price-unit">Precio unitario: {{ item.book.price | currency:'USD' }}</p>
+              <p class="item-stock" *ngIf="item.book.stock !== undefined">
+                Stock: {{ item.book.stock }}
+                <span *ngIf="item.quantity > item.book.stock" class="text-danger"> (Cantidad excede stock)</span>
+              </p>
+            </div>
+            <div class="item-quantity">
+               <button mat-icon-button (click)="decrementQuantity(item)" aria-label="Reducir cantidad">
+                   <i-tabler name="minus" class="icon-18"></i-tabler>
+               </button>
+               <input type="number" class="quantity-input" [value]="item.quantity" (change)="updateQuantity(item, $any($event.target).value)" min="0" [max]="item.book.stock !== undefined ? item.book.stock : 99">
+               <button mat-icon-button (click)="incrementQuantity(item)" [disabled]="item.book.stock !== undefined && item.quantity >= item.book.stock" aria-label="Aumentar cantidad">
+                   <i-tabler name="plus" class="icon-18"></i-tabler>
+               </button>
+            </div>
+            <div class="item-total-price">
+              {{ (item.book.price * item.quantity) | currency:'USD' }}
+            </div>
+            <div class="item-actions">
+              <button mat-icon-button color="warn" (click)="removeFromCart(item)" matTooltip="Eliminar del carrito">
+                <i-tabler name="trash" class="icon-20"></i-tabler>
+              </button>
+            </div>
           </div>
-          <div class="item-details">
-            <a [routerLink]="item.productUrl || ['/libro', item.bookId]">
-              <h3 class="item-title">{{ item.title }}</h3>
-            </a>
-            <p class="item-author">por {{ item.author }}</p>
-            <p class="item-price-unit">Precio unitario: {{ item.unitPrice | currency:'USD' }}</p>
-          </div>
-          <div class="item-quantity">
-             <button mat-icon-button (click)="decrementQuantity(item)" [disabled]="item.quantity <= 1" aria-label="Reducir cantidad">
-                 <i-tabler name="minus" class="icon-18"></i-tabler>
-             </button>
-             <input type="number" class="quantity-input" [value]="item.quantity" (change)="updateQuantity(item, +$any($event.target).value)" min="1" max="99">
-             <button mat-icon-button (click)="incrementQuantity(item)" aria-label="Aumentar cantidad">
-                 <i-tabler name="plus" class="icon-18"></i-tabler>
-             </button>
-          </div>
-          <div class="item-total-price">
-            {{ (item.unitPrice * item.quantity) | currency:'USD' }}
-          </div>
-          <div class="item-actions">
-            <button mat-icon-button color="warn" (click)="removeItem(item.bookId)" matTooltip="Eliminar del carrito">
-              <i-tabler name="trash" class="icon-20"></i-tabler>
-            </button>
-          </div>
+        </mat-card>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Subtotal ({{ cartData.totalItems }} ítems):</span>
+          <span class="summary-value">{{ cartData.totalPrice | currency:'USD' }}</span>
         </div>
-      </mat-card>
-    </div>
-
-    <mat-divider class="section-divider"></mat-divider>
-
-    <div class="cart-summary">
-      <div class="summary-row">
-        <span>Subtotal ({{ cart.totalItems }} ítems):</span>
-        <span class="summary-value">{{ cart.subtotal | currency:'USD' }}</span>
-      </div>
-      <!-- Aquí irían descuentos, envío, etc. -->
-      <div class="summary-row total-row">
-        <span>Total Estimado:</span>
-        <span class="summary-value total-value">{{ cart.subtotal | currency:'USD' }}</span>
-      </div>
-      <div class="cart-actions">
-        <button mat-stroked-button color="primary" routerLink="/catalogo">
-          <i-tabler name="arrow-left" class="icon-20"></i-tabler> Seguir Comprando
-        </button>
-        <button mat-flat-button color="primary" routerLink="/checkout" class="checkout-button" [disabled]="cart.items.length === 0">
-          Proceder al Pago <i-tabler name="arrow-right" class="icon-20"></i-tabler>
+        <!-- Aquí irían descuentos, envío, etc. -->
+        <div class="summary-row total-row">
+          <span>Total Estimado:</span>
+          <span class="summary-value total-value">{{ cartData.totalPrice | currency:'USD' }}</span>
+        </div>
+        <div class="cart-actions">
+          <button mat-stroked-button color="primary" routerLink="/catalogo">
+            <i-tabler name="arrow-left" class="icon-20"></i-tabler> Seguir Comprando
+          </button>
+          <button mat-flat-button color="primary" (click)="proceedToCheckout()" class="checkout-button" [disabled]="!cartData.items || cartData.items.length === 0">
+            Proceder al Pago <i-tabler name="arrow-right" class="icon-20"></i-tabler>
+          </button>
+        </div>
+        <button mat-button color="warn" (click)="clearAllCart()" class="clear-cart-button" *ngIf="cartData.items && cartData.items.length > 0">
+          <i-tabler name="clear-all" class="icon-20"></i-tabler> Vaciar Carrito
         </button>
       </div>
-      <button mat-button color="warn" (click)="clearCart()" class="clear-cart-button" *ngIf="cart.items.length > 0">
-        <i-tabler name="clear-all" class="icon-20"></i-tabler> Vaciar Carrito
-      </button>
-    </div>
 
-  </div>
-  <ng-template #emptyCart>
-    <div class="empty-cart-message">
-      <i-tabler name="shopping-cart-off" class="icon-64"></i-tabler>
+    </div>
+    <ng-template #emptyCart>
+      <div class="empty-cart-message">
+        <i-tabler name="shopping-cart-off" class="icon-64"></i-tabler>
       <h2>Tu carrito está vacío</h2>
       <p>Parece que no has añadido ningún libro todavía.</p>
       <a mat-stroked-button routerLink="/catalogo" color="primary">Explorar Catálogo</a>

@@ -1,0 +1,41 @@
+<div class="container mt-4 order-list-page">
+  <h1 class="page-title">Mis Pedidos</h1>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Cargando tus pedidos...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <p>Error: {{ errorMessage }}</p>
+    <button mat-stroked-button (click)="ngOnInit()">Reintentar</button>
+  </div>
+
+  <ng-container *ngIf="orders$ | async as orders">
+    <div *ngIf="!isLoading && !errorMessage && orders.length === 0" class="empty-state">
+      <i-tabler name="clipboard-list" class="icon-extra-large"></i-tabler>
+      <h2>No tienes pedidos todavía.</h2>
+      <p>Parece que aún no has realizado ninguna compra.</p>
+      <a mat-flat-button color="primary" routerLink="/catalogo">Explorar Catálogo</a>
+    </div>
+
+    <div *ngIf="!isLoading && orders.length > 0" class="orders-grid">
+      <mat-card *ngFor="let order of orders" class="order-card">
+        <mat-card-header>
+          <mat-card-title>Pedido #{{ order.id }}</mat-card-title>
+          <mat-card-subtitle>Fecha: {{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p><strong>Estado:</strong> <span class="status-chip status-{{order.status | lowercase}}">{{ order.status }}</span></p>
+          <p><strong>Total:</strong> {{ order.totalAmount | currency:'USD' }}</p>
+          <p><strong>Items:</strong> {{ order.items.length }}</p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button (click)="viewOrderDetails(order.id)">
+            Ver Detalles <i-tabler name="arrow-right" class="icon-18"></i-tabler>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>

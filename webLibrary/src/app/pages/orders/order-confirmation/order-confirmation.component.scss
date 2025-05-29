@@ -1,0 +1,57 @@
+.confirmation-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh; // Take up most of the viewport height
+}
+
+.confirmation-card {
+  max-width: 500px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 1.8em;
+  margin-bottom: 1rem;
+}
+
+.icon-extra-large {
+  font-size: 4rem; // Assuming Tabler icons scale with font-size
+  width: 4rem;
+  height: 4rem;
+}
+
+.text-success {
+  color: #28a745; // Bootstrap success green
+}
+
+.lead {
+  font-size: 1.2em;
+  margin-bottom: 0.5rem;
+}
+
+.mt-5 {
+  margin-top: 3rem;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.ms-2 {
+  margin-left: 0.5rem !important; // If using Material buttons, sometimes direct margin is needed
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+mat-card-actions button, mat-card-actions a { // Ensure buttons/links in actions have some margin
+    margin: 5px;
+}

@@ -1,0 +1,114 @@
+.order-list-page {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #3f51b5; // Example primary color
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  p {
+    margin-top: 10px;
+    font-size: 1.1em;
+  }
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+
+  .icon-extra-large {
+    font-size: 64px; // Assuming Tabler icons scale with font-size or use width/height
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    color: #777;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #555;
+    margin-bottom: 20px;
+  }
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.order-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // Pushes actions to the bottom
+
+  mat-card-header {
+    padding-bottom: 8px; // More space after subtitle
+  }
+  mat-card-title {
+    font-size: 1.1em;
+  }
+  mat-card-subtitle {
+    font-size: 0.9em;
+    color: #666;
+  }
+  mat-card-content {
+    p {
+      margin: 8px 0;
+      font-size: 0.95em;
+    }
+    .status-chip {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      color: white;
+
+      &.status-pending { background-color: #ffc107; color: #333; } // Amber
+      &.status-processing { background-color: #17a2b8; } // Info blue
+      &.status-shipped { background-color: #28a745; } // Success green
+      &.status-delivered { background-color: #6c757d; } // Secondary grey
+      &.status-cancelled { background-color: #dc3545; } // Danger red
+      &.status-refunded { background-color: #fd7e14; } // Orange
+    }
+  }
+  mat-card-actions {
+    padding-top: 8px; // Space above actions
+    .icon-18 { // Adjust if Tabler icons need explicit sizing
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+    }
+  }
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}

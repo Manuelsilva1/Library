@@ -36,17 +36,20 @@ export class HeaderComponent implements OnInit { // Implementar OnInit
 
   totalCartItems$: Observable<number>;
   currentUser$: Observable<User | null>;
+  isAuthenticated$: Observable<boolean>; // Añadir isAuthenticated$
 
   constructor(
     private cartService: CartService,
     public authService: AuthService // Hacerlo público para usar en template o obtener currentUser$
+    // private router: Router // Router no es necesario aquí si AuthService maneja la redirección
   ) {
-    this.totalCartItems$ = this.cartService.getTotalItems();
+    this.totalCartItems$ = this.cartService.totalItems$; // Use the new totalItems$ observable
     this.currentUser$ = this.authService.currentUser$;
+    this.isAuthenticated$ = this.authService.isAuthenticated$; // Inicializar isAuthenticated$
   }
 
   ngOnInit(): void {
-    // this.currentUser$ = this.authService.currentUser$; // Alternativamente aquí
+    // No es necesario reasignar aquí si se hace en el constructor
   }
 
   logout(): void {

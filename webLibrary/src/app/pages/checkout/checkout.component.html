@@ -1,127 +1,99 @@
-<div class="checkout-container" *ngIf="cart$ | async as cart">
+<div class="checkout-container">
   <h1 class="page-title">Finalizar Compra</h1>
 
-  <div class="checkout-grid">
+  <div class="checkout-grid" *ngIf="cartItems.length > 0; else emptyCartMessage">
     <!-- Columna Izquierda: Formularios y Selección -->
     <div class="checkout-forms">
-      <mat-stepper orientation="vertical" [linear]="true" #stepper>
-        <!-- Paso 1: Información de Envío -->
-        <mat-step [stepControl]="shippingForm" label="Información de Envío">
-          <form [formGroup]="shippingForm">
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Nombre Completo</mat-label>
-                <input matInput formControlName="fullName" required>
-                <mat-error *ngIf="shippingForm.get('fullName')?.hasError('required')">Nombre es requerido</mat-error>
-              </mat-form-field>
+      <h2 class="section-title">Dirección de Envío</h2>
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Línea de Dirección 1</mat-label>
+            <input matInput formControlName="shippingAddressLine1" required>
+            <mat-error *ngIf="checkoutForm.get('shippingAddressLine1')?.hasError('required')">
+              Dirección es requerida
+            </mat-error>
+          </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Línea de Dirección 1</mat-label>
-                <input matInput formControlName="addressLine1" required>
-                <mat-error *ngIf="shippingForm.get('addressLine1')?.hasError('required')">Dirección es requerida</mat-error>
-              </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Línea de Dirección 2 (Opcional)</mat-label>
+            <input matInput formControlName="shippingAddressLine2">
+          </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Línea de Dirección 2 (Opcional)</mat-label>
-                <input matInput formControlName="addressLine2">
-              </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Ciudad</mat-label>
+            <input matInput formControlName="shippingCity" required>
+            <mat-error *ngIf="checkoutForm.get('shippingCity')?.hasError('required')">
+              Ciudad es requerida
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Código Postal</mat-label>
+            <input matInput formControlName="shippingPostalCode" required>
+            <mat-error *ngIf="checkoutForm.get('shippingPostalCode')?.hasError('required')">
+              Código Postal es requerido
+            </mat-error>
+          </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Ciudad</mat-label>
-                <input matInput formControlName="city" required>
-                <mat-error *ngIf="shippingForm.get('city')?.hasError('required')">Ciudad es requerida</mat-error>
-              </mat-form-field>
-              
-              <mat-form-field appearance="outline">
-                <mat-label>Provincia/Estado</mat-label>
-                <input matInput formControlName="stateProvince" required>
-                <mat-error *ngIf="shippingForm.get('stateProvince')?.hasError('required')">Provincia/Estado es requerido</mat-error>
-              </mat-form-field>
+          <mat-form-field appearance="outline">
+             <mat-label>País</mat-label>
+             <input matInput formControlName="shippingCountry" required>
+             <mat-error *ngIf="checkoutForm.get('shippingCountry')?.hasError('required')">
+               País es requerido
+             </mat-error>
+          </mat-form-field>
+        </div>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Código Postal</mat-label>
-                <input matInput formControlName="postalCode" required>
-                <mat-error *ngIf="shippingForm.get('postalCode')?.hasError('required')">Código Postal es requerido</mat-error>
-                <mat-error *ngIf="shippingForm.get('postalCode')?.hasError('pattern')">Formato de Código Postal inválido</mat-error>
-              </mat-form-field>
+        <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
 
-              <mat-form-field appearance="outline">
-                 <mat-label>País</mat-label>
-                 <input matInput formControlName="country" required> 
-                 <!-- Podría ser un mat-select si tienes una lista de países -->
-                 <mat-error *ngIf="shippingForm.get('country')?.hasError('required')">País es requerido</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Teléfono</mat-label>
-                <input matInput type="tel" formControlName="phone" required>
-                <mat-error *ngIf="shippingForm.get('phone')?.hasError('required')">Teléfono es requerido</mat-error>
-              </mat-form-field>
-            </div>
-            <div class="stepper-actions">
-              <button mat-flat-button color="primary" matStepperNext>Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-
-        <!-- Paso 2: Método de Envío -->
-        <mat-step label="Método de Envío">
-          <mat-radio-group [(ngModel)]="selectedShippingMethod" class="shipping-options">
-            <mat-radio-button *ngFor="let method of shippingMethods" [value]="method" class="shipping-option">
-              {{ method.name }} - <strong>{{ method.price | currency:'USD' }}</strong>
-            </mat-radio-button>
-          </mat-radio-group>
-          <div class="stepper-actions">
-            <button mat-button matStepperPrevious>Anterior</button>
-            <button mat-flat-button color="primary" matStepperNext>Siguiente</button>
-          </div>
-        </mat-step>
-
-        <!-- Paso 3: Método de Pago -->
-        <mat-step label="Método de Pago">
-          <mat-radio-group [(ngModel)]="selectedPaymentMethod" class="payment-options">
-            <mat-radio-button *ngFor="let method of paymentMethods" [value]="method" class="payment-option">
-              <i-tabler [name]="method.id === 'creditcard' ? 'credit-card' : (method.id === 'paypal' ? 'brand-paypal' : 'cash')" class="icon-20 m-r-8"></i-tabler>
-              {{ method.name }}
-            </mat-radio-button>
-          </mat-radio-group>
-          <!-- Aquí se podrían añadir campos específicos para el método de pago seleccionado -->
-          <div *ngIf="selectedPaymentMethod.id === 'creditcard'" class="payment-details margin-top-2">
-             <p class="text-muted"><i>(Integración de formulario de tarjeta de crédito aquí)</i></p>
-          </div>
-          <div class="stepper-actions">
-            <button mat-button matStepperPrevious>Anterior</button>
-            <button mat-flat-button color="primary" (click)="placeOrder(cart)">Realizar Pedido</button>
-          </div>
-        </mat-step>
-      </mat-stepper>
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="checkoutForm.invalid || isLoading || cartItems.length === 0">
+            <span *ngIf="!isLoading">Realizar Pedido</span>
+            <span *ngIf="isLoading">
+              <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner> Procesando...
+            </span>
+          </button>
+        </div>
+      </form>
     </div>
 
     <!-- Columna Derecha: Resumen del Pedido -->
     <div class="order-summary">
       <h3 class="summary-title">Resumen de tu Pedido</h3>
-      <mat-card *ngIf="cart.items.length > 0" class="summary-card">
-        <mat-list>
-          <mat-list-item *ngFor="let item of cart.items">
-            <img matListItemAvatar [src]="item.coverImageUrl" [alt]="item.title" class="summary-item-image">
-            <div matListItemTitle class="summary-item-title">{{ item.title }} (x{{ item.quantity }})</div>
-            <div matListItemLine class="summary-item-author">{{ item.author }}</div>
-            <span matListItemMeta class="summary-item-price">{{ (item.unitPrice * item.quantity) | currency:'USD' }}</span>
+      <mat-card class="summary-card">
+        <mat-list *ngIf="cartItems.length > 0">
+          <mat-list-item *ngFor="let item of cartItems">
+            <img matListItemAvatar [src]="item.book.coverImageUrl || 'assets/images/default-cover.png'" [alt]="item.book.title" class="summary-item-image">
+            <div matListItemTitle class="summary-item-title">{{ item.book.title }} (x{{ item.quantity }})</div>
+            <div matListItemLine class="summary-item-author">{{ item.book.author }}</div>
+            <span matListItemMeta class="summary-item-price">{{ (item.book.price * item.quantity) | currency:'USD' }}</span>
           </mat-list-item>
         </mat-list>
         
-        <mat-divider></mat-divider>
+        <mat-divider *ngIf="cartItems.length > 0"></mat-divider>
         
-        <div class="summary-totals">
-          <p>Subtotal: <span>{{ cart.subtotal | currency:'USD' }}</span></p>
-          <p *ngIf="selectedShippingMethod">Envío ({{selectedShippingMethod.name}}): <span>{{ selectedShippingMethod.price | currency:'USD' }}</span></p>
-          <mat-divider></mat-divider>
-          <p class="grand-total">Total: <strong>{{ getGrandTotal(cart.subtotal) | currency:'USD' }}</strong></p>
+        <div class="summary-totals" *ngIf="cartItems.length > 0">
+          <p class="grand-total">Total: <strong>{{ totalPrice | currency:'USD' }}</strong></p>
+        </div>
+        <div *ngIf="cartItems.length === 0" class="empty-cart-summary-box">
+           Tu carrito está vacío.
         </div>
       </mat-card>
-      <div *ngIf="cart.items.length === 0" class="empty-cart-summary">
-         Tu carrito está vacío. <a routerLink="/catalogo">Ve a comprar algo</a>.
-      </div>
+      <a mat-stroked-button routerLink="/catalogo" class="continue-shopping-link">
+        <i-tabler name="arrow-left" class="icon-20"></i-tabler> Continuar Comprando
+      </a>
     </div>
   </div>
 </div>
+
+<ng-template #emptyCartMessage>
+  <div class="empty-cart-fullpage">
+    <i-tabler name="shopping-cart-x" class="icon-extra-large"></i-tabler>
+    <h2>Tu carrito está vacío</h2>
+    <p>No puedes proceder al checkout sin items en tu carrito.</p>
+    <a mat-flat-button color="primary" routerLink="/catalogo">Volver al Catálogo</a>
+  </div>
+</ng-template>

@@ -43,9 +43,10 @@ export class LoginComponent implements OnInit {
     }
     this.isLoading = true;
     this.errorMessage = null;
-    const { email, password } = this.loginForm.value;
+    // const { email, password } = this.loginForm.value; // Old way
+    const credentials = this.loginForm.value; // New way, sends {email, password}
 
-    this.authService.login(email, password).subscribe({
+    this.authService.login(credentials).subscribe({
       next: (user) => {
         this.isLoading = false;
         this.router.navigate(['/']); // Redirigir a la página principal o a donde sea necesario

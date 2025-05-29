@@ -1,0 +1,136 @@
+<div class="container mt-4">
+  <h2>{{ isEditMode ? 'Editar Libro' : 'Crear Nuevo Libro' }}</h2>
+
+  <mat-card *ngIf="!isLoading">
+    <mat-card-content>
+      <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
+
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="title" placeholder="Título del libro">
+          <mat-error *ngIf="bookForm.get('title')?.hasError('required') && bookForm.get('title')?.touched">
+            El título es requerido.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Author -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Autor</mat-label>
+          <input matInput formControlName="author" placeholder="Autor del libro">
+        </mat-form-field>
+
+        <!-- Price -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Precio</mat-label>
+          <input matInput type="number" formControlName="price" placeholder="Precio">
+          <mat-error *ngIf="bookForm.get('price')?.hasError('required') && bookForm.get('price')?.touched">
+            El precio es requerido.
+          </mat-error>
+          <mat-error *ngIf="bookForm.get('price')?.hasError('min') && bookForm.get('price')?.touched">
+            El precio debe ser positivo.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Category -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Categoría</mat-label>
+          <input matInput formControlName="category" placeholder="Categoría">
+        </mat-form-field>
+
+        <!-- Short Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción Corta</mat-label>
+          <textarea matInput formControlName="shortDescription" placeholder="Descripción corta"></textarea>
+        </mat-form-field>
+
+        <!-- Cover Image URL -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>URL Imagen de Portada</mat-label>
+          <input matInput formControlName="coverImageUrl" placeholder="http://example.com/cover.jpg">
+        </mat-form-field>
+        
+        <!-- Publisher -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Editorial</mat-label>
+          <input matInput formControlName="publisher" placeholder="Editorial">
+        </mat-form-field>
+
+        <!-- Publish Date -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Fecha de Publicación</mat-label>
+          <input matInput type="date" formControlName="publishDate" placeholder="yyyy-MM-dd">
+           <mat-hint>Formato: YYYY-MM-DD</mat-hint>
+        </mat-form-field>
+
+        <!-- Pages -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Número de Páginas</mat-label>
+          <input matInput type="number" formControlName="pages" placeholder="Número de páginas">
+           <mat-error *ngIf="bookForm.get('pages')?.hasError('min') && bookForm.get('pages')?.touched">
+            El número de páginas debe ser positivo.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- ISBN -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>ISBN</mat-label>
+          <input matInput formControlName="isbn" placeholder="ISBN">
+        </mat-form-field>
+
+        <!-- Language -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Idioma</mat-label>
+          <input matInput formControlName="language" placeholder="Idioma">
+        </mat-form-field>
+
+        <!-- Additional Image URLs -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>URLs Imágenes Adicionales</mat-label>
+          <input matInput formControlName="additionalImageUrls" placeholder="url1.jpg, url2.jpg, ...">
+          <mat-hint>Separar URLs con comas</mat-hint>
+        </mat-form-field>
+
+        <!-- Stock -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Stock</mat-label>
+          <input matInput type="number" formControlName="stock" placeholder="Cantidad en stock">
+          <mat-error *ngIf="bookForm.get('stock')?.hasError('required') && bookForm.get('stock')?.touched">
+            El stock es requerido.
+          </mat-error>
+          <mat-error *ngIf="bookForm.get('stock')?.hasError('min') && bookForm.get('stock')?.touched">
+            El stock no puede ser negativo.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert alert-success mt-3">
+          {{ successMessage }}
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="mt-3">
+          <button mat-raised-button color="primary" type="submit" [disabled]="bookForm.invalid || isLoading">
+            <span *ngIf="!isLoading">{{ isEditMode ? 'Actualizar Libro' : 'Crear Libro' }}</span>
+            <span *ngIf="isLoading">
+              <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+              {{ isEditMode ? ' Actualizando...' : ' Creando...' }}
+            </span>
+          </button>
+          <a mat-stroked-button routerLink="/admin/books" class="ms-2">Cancelar</a>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Cargando datos del formulario...</p>
+  </div>
+
+</div>
