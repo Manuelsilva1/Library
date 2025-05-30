@@ -1,0 +1,161 @@
+openapi: 3.0.0
+info:
+  title: Bookstore API
+  version: 1.0.0
+  description: API for online bookstore and POS system.
+components:
+  schemas:
+    PlaceholderSchema:
+      type: object
+      description: This is a placeholder schema. Replace with actual DTO definitions.
+    OrderRequestDTO:
+      type: object
+      description: Placeholder for Order Request DTO
+    OrderResponseDTO:
+      type: object
+      description: Placeholder for Order Response DTO
+    SaleRequestDTO:
+      type: object
+      description: Placeholder for Sale Request DTO
+    SaleResponseDTO:
+      type: object
+      description: Placeholder for Sale Response DTO
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: [] # Global security, can be overridden per path
+
+paths:
+  /api/auth/login:
+    post:
+      summary: User login
+      description: Authenticates a user and returns a JWT token.
+      security: [] # Public endpoint, override global security
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Authentication successful, JWT token returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
+
+  /api/orders:
+    post:
+      summary: Create a new order
+      description: Allows creation of a new order. This endpoint is public.
+      security: [] # Public endpoint, override global security
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequestDTO'
+      responses:
+        '201':
+          description: Order created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
+    get:
+      summary: Get all orders
+      description: Retrieves a list of all orders. Requires authentication.
+      security:
+        - bearerAuth: [] # Secured endpoint
+      responses:
+        '200':
+          description: A list of orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponseDTO'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
+
+  /api/sales:
+    post:
+      summary: Record a new sale
+      description: Records a new sale transaction. Requires authentication.
+      security:
+        - bearerAuth: [] # Secured endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaleRequestDTO'
+      responses:
+        '201':
+          description: Sale recorded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleResponseDTO'
+        '400':
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
+
+  /api/books:
+    get:
+      summary: Get all books
+      description: Retrieves a list of all available books. This endpoint is public.
+      security: [] # Public endpoint, override global security
+      responses:
+        '200':
+          description: A list of books.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceholderSchema' # Assuming a BookDTO or similar
+        '404':
+          description: No books found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderSchema'
