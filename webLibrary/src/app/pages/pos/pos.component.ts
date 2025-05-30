@@ -8,14 +8,16 @@ import { SaleService } from '../../services/sale.service';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book.model';
 import { SaleItem, SaleRequest } from '../../models';
-import { debounceTime, distinctUntilChanged, switchMap, catchError, tap, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, tap, map, takeUntil } from 'rxjs/operators'; // Added takeUntil
 import { Observable, of, Subject, Subscription } from 'rxjs';
 
 // Interface for items displayed in the current sale list
-interface DisplaySaleItem extends SaleItem {
+interface DisplaySaleItem { 
+  bookId: number;    
+  quantity: number;  
   title: string;
   price: number;
-  currentStock: number; // To manage quantity against available stock
+  currentStock?: number; // Optional, to align with book.stock being optional
 }
 
 @Component({
@@ -95,18 +97,23 @@ export class PosComponent implements OnInit, OnDestroy {
     if (quantityToAdd <= 0) return;
 
     const existingItem = this.currentSaleItems.find(item => item.bookId === book.id);
-    const availableStock = book.stock !== undefined ? book.stock : Infinity; // Treat undefined stock as infinite for POS
+    const stockForBook = book.stock; // This is number | undefined
 
     if (existingItem) {
-      const newQuantity = existingItem.quantity + quantityToAdd;
-      existingItem.quantity = Math.min(newQuantity, availableStock + existingItem.quantity); // Max is original stock + already in cart
+      const currentItemQuantityInCart = existingItem.quantity;
+      // Max quantity user can set for this item = its original stock (if defined)
+      // If stock is undefined, no upper limit from stock perspective.
+      const maxAllowedBasedOnStock = stockForBook !== undefined ? stockForBook : Infinity;
+      const newQuantity = currentItemQuantityInCart + quantityToAdd;
+      existingItem.quantity = Math.min(newQuantity, maxAllowedBasedOnStock);
+
     } else {
       this.currentSaleItems.push({
         bookId: book.id,
-        quantity: Math.min(quantityToAdd, availableStock),
+        quantity: Math.min(quantityToAdd, stockForBook !== undefined ? stockForBook : Infinity),
         title: book.title,
         price: book.price,
-        currentStock: availableStock 
+        currentStock: stockForBook // Store the initial stock (number | undefined)
       });
     }
     this.bookSearchForm.patchValue({ searchTerm: '', quantity: 1 });
@@ -121,8 +128,9 @@ export class PosComponent implements OnInit, OnDestroy {
       if (newQuantity <= 0) {
         this.removeSaleItem(bookId);
       } else {
-        // Use currentStock from when item was added for validation in POS context
-        item.quantity = Math.min(newQuantity, item.currentStock); 
+        // Use currentStock (initial stock of the book when added) for validation
+        const maxQuantity = item.currentStock !== undefined ? item.currentStock : Infinity;
+        item.quantity = Math.min(newQuantity, maxQuantity); 
         (event.target as HTMLInputElement).value = item.quantity.toString(); // Reflect actual quantity set
         this.calculateSaleTotal();
       }

@@ -58,21 +58,24 @@ export class RegisterComponent implements OnInit {
     this.errorMessage = null;
     this.successMessage = null;
     // const { fullName, email, password } = this.registerForm.value; // Old way
-    const userData = this.registerForm.value; // New way, sends {fullName, email, password, confirmPassword}
-                                              // The service will only use fullName, email, password
-
-    this.authService.register(userData).subscribe({
-      next: (user) => {
-        this.isLoading = false;
-        this.successMessage = `¡Registro exitoso para ${user.fullName}! Ahora puedes iniciar sesión.`;
-        this.registerForm.reset();
-        // Opcionalmente, redirigir a login después de un delay
-        // setTimeout(() => this.router.navigate(['/login']), 3000);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.message || 'Error en el registro. Inténtalo de nuevo.';
-      }
-    });
+    const userData = this.registerForm.value; 
+                                              
+    // TODO: Re-enable registration when AuthService.register is implemented
+    console.warn("AuthService.register is not available. Registration feature is currently disabled.");
+    this.errorMessage = "La función de registro no está disponible en este momento. Por favor, inténtalo más tarde.";
+    this.isLoading = false;
+    // this.authService.register(userData).subscribe({
+    //   next: (user) => {
+    //     this.isLoading = false;
+    //     this.successMessage = `¡Registro exitoso para ${user.fullName}! Ahora puedes iniciar sesión.`;
+    //     this.registerForm.reset();
+    //     // Opcionalmente, redirigir a login después de un delay
+    //     // setTimeout(() => this.router.navigate(['/login']), 3000);
+    //   },
+    //   error: (err) => {
+    //     this.isLoading = false;
+    //     this.errorMessage = err.message || 'Error en el registro. Inténtalo de nuevo.';
+    //   }
+    // });
   }
 }

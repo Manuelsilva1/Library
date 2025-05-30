@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import FormBuilder, FormGroup
 import { MaterialModule } from 'src/app/material.module';
 import { BookCardComponent } from '../../components/book-card/book-card.component';
-import { BookService, Filters } from '../../services/book.service';
+import { BookService } from '../../services/book.service'; // Removed Filters import
 import { Book } from '../../models/book.model';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject, Subscription } from 'rxjs'; // Import Subscription
