@@ -31,7 +31,7 @@ import { Observable } from 'rxjs';
   encapsulation: ViewEncapsulation.None,
 })
 export class HeaderComponent implements OnInit { // Implementar OnInit
-  @Input() showToggle = true;
+  @Input() showToggle = false;
   @Input() toggleChecked = false;
   @Output() toggleMobileNav = new EventEmitter<void>();
 
