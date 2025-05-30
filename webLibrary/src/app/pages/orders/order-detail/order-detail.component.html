@@ -1,0 +1,67 @@
+<div class="container mt-4 order-detail-page">
+  <button mat-stroked-button (click)="goBackToOrders()" class="mb-3">
+    <i-tabler name="arrow-left" class="icon-18"></i-tabler> Volver a Mis Pedidos
+  </button>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Cargando detalle del pedido...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+    <p>Error: {{ errorMessage }}</p>
+    <!-- Could add a retry button if appropriate, or rely on back button -->
+  </div>
+
+  <ng-container *ngIf="order$ | async as order">
+    <div *ngIf="!isLoading && !errorMessage && !order" class="empty-state">
+      <i-tabler name="file-invoice" class="icon-extra-large"></i-tabler>
+      <h2>Pedido no encontrado</h2>
+      <p>No pudimos encontrar los detalles para este pedido.</p>
+    </div>
+
+    <div *ngIf="order && !isLoading" class="order-details-content">
+      <mat-card class="overview-card">
+        <mat-card-header>
+          <mat-card-title>Pedido #{{ order.id }}</mat-card-title>
+          <mat-card-subtitle>Realizado el: {{ order.orderDate | date:'dd/MM/yyyy HH:mm:ss' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div><strong>Estado:</strong> <span class="status-chip status-{{order.status | lowercase}}">{{ order.status }}</span></div>
+            <div><strong>Total del Pedido:</strong> {{ order.totalAmount | currency:'USD' }}</div>
+            <div><strong>ID de Usuario:</strong> {{ order.userId }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="shipping-card mt-3">
+        <mat-card-header>
+          <mat-card-title>Información de Envío</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ order.shippingAddressLine1 }}</p>
+          <p *ngIf="order.shippingAddressLine2">{{ order.shippingAddressLine2 }}</p>
+          <p>{{ order.shippingCity }}, {{ order.shippingPostalCode }}</p>
+          <p>{{ order.shippingCountry }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <h2 class="items-title mt-3">Items del Pedido</h2>
+      <div class="order-items-grid">
+        <mat-card *ngFor="let item of order.items" class="item-card">
+          <!-- No image for now, could be added if item.book.coverImageUrl is available via a more complex OrderItemResponseDto -->
+          <mat-card-header>
+            <mat-card-title>{{ item.bookTitle }}</mat-card-title>
+            <mat-card-subtitle>ID Libro: {{ item.bookId }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Cantidad:</strong> {{ item.quantity }}</p>
+            <p><strong>Precio Unitario (al comprar):</strong> {{ item.priceAtPurchase | currency:'USD' }}</p>
+            <p><strong>Subtotal:</strong> {{ calculateItemTotal(item) | currency:'USD' }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </ng-container>
+</div>

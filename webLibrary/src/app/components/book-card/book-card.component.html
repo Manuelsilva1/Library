@@ -13,7 +13,9 @@
   </mat-card-content>
   <mat-card-actions class="book-actions">
     <button mat-flat-button color="primary" [routerLink]="['/libro', book.id]">Ver Detalles</button>
-    <button mat-icon-button color="accent" aria-label="Añadir al carrito" (click)="addToCart($event)">
+    <button mat-icon-button color="accent" aria-label="Añadir al carrito" (click)="addToCart($event)"
+            [disabled]="book.stock === undefined || book.stock === 0"
+            matTooltip="{{ (book.stock === undefined || book.stock === 0) ? 'Agotado' : 'Añadir al carrito' }}">
       <i-tabler name="shopping-cart-plus" class="icon-20"></i-tabler>
     </button>
   </mat-card-actions>

@@ -1,0 +1,25 @@
+<div class="container mt-5 text-center confirmation-page">
+  <mat-card class="confirmation-card">
+    <mat-card-header class="justify-content-center">
+      <i-tabler name="circle-check" class="icon-extra-large text-success mb-3"></i-tabler>
+    </mat-card-header>
+    <mat-card-title class="page-title">¡Pedido Realizado con Éxito!</mat-card-title>
+    <mat-card-content>
+      <p class="lead">Gracias por tu compra.</p>
+      <p *ngIf="orderId">Tu número de pedido es: <strong>#{{ orderId }}</strong></p>
+      <p>Hemos enviado una confirmación a tu correo electrónico (simulado).</p>
+      <p>Puedes ver los detalles de tu pedido o seguir explorando nuestros libros.</p>
+    </mat-card-content>
+    <mat-card-actions class="justify-content-center mt-3">
+      <a mat-flat-button color="primary" [routerLink]="['/my-orders', orderId]" *ngIf="orderId">
+        Ver Detalles del Pedido
+      </a>
+      <a mat-stroked-button routerLink="/my-orders" class="ms-2" *ngIf="!orderId">
+        Ver Mis Pedidos
+      </a>
+      <a mat-stroked-button routerLink="/catalogo" class="ms-2">
+        Seguir Comprando
+      </a>
+    </mat-card-actions>
+  </mat-card>
+</div>

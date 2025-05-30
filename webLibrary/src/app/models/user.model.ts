@@ -1,6 +1,8 @@
 export interface User {
-  id: string;
+  id?: any; // Can be number (from backend Long) or string
   email: string;
   fullName?: string;
-  // Otros campos como token JWT podrían ir aquí en una implementación real
+  token?: string; // For storing JWT token
+  roles?: string[]; // Para almacenar los roles del usuario
+  // Backend User also has createdAt, updatedAt but not strictly needed on client unless used
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { CartService } from '../../services/cart.service'; // Ajusta ruta
-import { Cart, CartItem } from '../../models/cart.model'; // Ajusta ruta
+import { Router, RouterModule } from '@angular/router'; // Import Router
+import { CartService, CartItem } from '../../services/cart.service'; // Import new CartItem from service
 import { Observable } from 'rxjs';
-import { MaterialModule } from 'src/app/material.module'; // Para UI
-import { TablerIconsModule } from 'angular-tabler-icons'; // Para iconos
+import { MaterialModule } from 'src/app/material.module';
+import { TablerIconsModule } from 'angular-tabler-icons';
+// import { Cart } from '../../models/cart.model'; // Old Cart model likely not needed directly
 
 @Component({
   selector: 'app-shopping-cart',
@@ -15,45 +15,56 @@ import { TablerIconsModule } from 'angular-tabler-icons'; // Para iconos
   imports: [CommonModule, RouterModule, MaterialModule, TablerIconsModule]
 })
 export class ShoppingCartComponent implements OnInit {
-  cart$: Observable<Cart>;
+  items$: Observable<CartItem[]>;
+  totalPrice$: Observable<number>;
+  totalItems$: Observable<number>;
 
-  constructor(private cartService: CartService) {
-    this.cart$ = this.cartService.cart$;
+  constructor(
+    private cartService: CartService,
+    private router: Router // Inject Router for navigation
+  ) {}
+
+  ngOnInit(): void {
+    this.items$ = this.cartService.items$;
+    this.totalPrice$ = this.cartService.totalPrice$;
+    this.totalItems$ = this.cartService.totalItems$;
   }
 
-  ngOnInit(): void { }
-
-  updateQuantity(item: CartItem, newQuantity: number): void {
-    if (newQuantity > 0) {
-      this.cartService.updateItemQuantity(item.bookId, newQuantity);
+  updateQuantity(item: CartItem, newQuantityString: string): void {
+    const newQuantity = parseInt(newQuantityString, 10);
+    if (!isNaN(newQuantity)) { // Basic validation for input type="number"
+        // newQuantity can be 0 or less, service handles removal
+        this.cartService.updateItemQuantity(item.book.id, newQuantity);
     }
   }
 
   incrementQuantity(item: CartItem): void {
-     this.updateQuantity(item, item.quantity + 1);
+    // Consider book.stock if available: item.book.stock
+    const currentStock = item.book.stock !== undefined ? item.book.stock : Infinity;
+    if (item.quantity < currentStock) {
+        this.cartService.updateItemQuantity(item.book.id, item.quantity + 1);
+    }
   }
 
   decrementQuantity(item: CartItem): void {
-     if (item.quantity > 1) {
-         this.updateQuantity(item, item.quantity - 1);
-     } else {
-         this.removeItem(item.bookId); // O mostrar confirmación
-     }
+    this.cartService.updateItemQuantity(item.book.id, item.quantity - 1);
+    // cartService.updateItemQuantity will handle removal if quantity becomes <= 0
   }
 
-  removeItem(bookId: string): void {
+  removeFromCart(item: CartItem): void {
     // Podrías añadir una confirmación aquí
-    this.cartService.removeItem(bookId);
+    this.cartService.removeItem(item.book.id);
   }
 
-  clearCart(): void {
+  clearAllCart(): void { // Renamed to avoid potential template issues if old name was used
     // Podrías añadir una confirmación aquí
     this.cartService.clearCart();
   }
-  
-  // Generar array para el selector de cantidad (ej. 1 a 10)
-  getQuantityOptions(currentQuantity: number = 0): number[] {
-    const maxQuantity = Math.max(10, currentQuantity + 5); // Mostrar hasta 10 o la cantidad actual + 5
-    return Array.from({ length: maxQuantity }, (_, i) => i + 1);
+
+  proceedToCheckout(): void {
+    this.router.navigate(['/checkout']);
+    // console.log('Proceeding to checkout...'); // Placeholder
   }
+
+  // getQuantityOptions no es necesario si se usan botones +/- y input numérico directo
 }

@@ -19,11 +19,10 @@ import { TablerIconsModule } from 'angular-tabler-icons'; // Para iconos
 export class BookDetailComponent implements OnInit, OnDestroy {
   book: Book | undefined;
   isLoading = true;
+  errorMessage: string | null = null;
   private routeSub: Subscription | undefined;
 
-  // Stock simulado
-  stockStatus = 'Disponible'; // Podría ser 'Pocos disponibles', 'Agotado'
-  stockQuantity = Math.floor(Math.random() * 20) + 1; // Cantidad aleatoria entre 1 y 20
+  // Las propiedades stockStatus y stockQuantity se eliminan, ya que usaremos book.stock directamente.
 
   constructor(
     private route: ActivatedRoute,
@@ -34,28 +33,42 @@ export class BookDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.pipe(
       switchMap(params => {
-        const id = params.get('id');
+        const idParam = params.get('id');
         this.isLoading = true;
-        if (id) {
-          return this.bookService.getBookById(id);
+        this.errorMessage = null;
+        if (idParam) {
+          const idAsNumber = +idParam; // Convert string ID to number
+          if (isNaN(idAsNumber)) {
+            this.isLoading = false;
+            this.errorMessage = 'ID de libro inválido.';
+            return []; // Or throwError, or of(undefined)
+          }
+          return this.bookService.getBookById(idAsNumber);
         }
+        this.isLoading = false;
+        this.errorMessage = 'No se proporcionó ID de libro.';
         return []; // o of(undefined) o throwError si prefieres manejarlo así
       })
-    ).subscribe(bookData => {
-      this.book = bookData;
-      this.isLoading = false;
-      if (bookData) {
-         // Simular estado de stock basado en cantidad (ejemplo)
-         if (this.stockQuantity < 5 && this.stockQuantity > 0) this.stockStatus = 'Pocos disponibles';
-         else if (this.stockQuantity === 0) this.stockStatus = 'Agotado';
-         else this.stockStatus = 'Disponible';
+    ).subscribe({
+      next: bookData => {
+        this.book = bookData;
+        this.isLoading = false;
+        if (!bookData) {
+          // This case might happen if getBookById returns undefined for a 404,
+          // or if the observable stream was empty due to invalid ID above.
+          this.errorMessage = 'Libro no encontrado.';
+        }
+        // Ya no se necesita la lógica de stockStatus/stockQuantity aquí
+      },
+      error: err => {
+        console.error('Error fetching book details:', err);
+        this.isLoading = false;
+        this.errorMessage = err.message || 'Error al cargar los detalles del libro.';
+        // Aquí podrías redirigir a una página de 'no encontrado' o mostrar un mensaje.
       }
-    }, error => {
-      console.error('Error fetching book details:', error);
-      this.isLoading = false;
-      // Aquí podrías redirigir a una página de 'no encontrado' o mostrar un mensaje.
     });
   }
+  // Se eliminó el bloque duplicado y erróneo que estaba aquí.
 
   ngOnDestroy(): void {
     if (this.routeSub) {

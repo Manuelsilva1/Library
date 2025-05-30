@@ -9,45 +9,63 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <div class="filters-content">
+    <form [formGroup]="filterForm" class="filters-content">
       <mat-form-field appearance="outline" class="filter-item">
         <mat-label>Buscar por título, autor, descripción...</mat-label>
-        <input matInput type="text" placeholder="Ej: El Quijote" (input)="onSearchTermInput($event)">
+        <input matInput type="text" formControlName="searchTerm" placeholder="Ej: El Quijote">
         <i-tabler name="search" matSuffix class="icon-20"></i-tabler>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filter-item">
         <mat-label>Autor</mat-label>
-        <input matInput type="text" placeholder="Ej: Miguel de Cervantes" (input)="onAuthorInput($event)" [value]="filters.author || ''">
+        <input matInput type="text" formControlName="author" placeholder="Ej: Miguel de Cervantes">
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filter-item">
         <mat-label>Categoría</mat-label>
-        <mat-select (selectionChange)="applyCategoryFilter($event.value)" [value]="filters.category || ''">
+        <mat-select formControlName="category">
           <mat-option value="">Todas</mat-option>
           <mat-option *ngFor="let category of categories" [value]="category">
             {{ category }}
           </mat-option>
         </mat-select>
+        <mat-progress-spinner *ngIf="isLoadingCategories" mode="indeterminate" diameter="20" matSuffix></mat-progress-spinner>
+        <mat-error *ngIf="categoriesError">{{ categoriesError }}</mat-error>
       </mat-form-field>
 
       <div class="filter-item price-filter">
-         <span class="price-filter-label">Precio:</span>
-         <mat-form-field appearance="outline" class="price-input">
-             <mat-label>Mín.</mat-label>
-             <input matInput type="number" placeholder="0" [(ngModel)]="priceMinFilter" (input)="applyPriceFilter()">
-         </mat-form-field>
-         <span class="price-separator">-</span>
-         <mat-form-field appearance="outline" class="price-input">
-             <mat-label>Máx.</mat-label>
-             <input matInput type="number" placeholder="200" [(ngModel)]="priceMaxFilter" (input)="applyPriceFilter()">
-         </mat-form-field>
-         <button mat-icon-button (click)="clearPriceFilter()" matTooltip="Limpiar filtro de precio">
-             <i-tabler name="clear-all" class="icon-20"></i-tabler>
-         </button>
+        <span class="price-filter-label">Precio:</span>
+        <mat-form-field appearance="outline" class="price-input">
+          <mat-label>Mín.</mat-label>
+          <input matInput type="number" formControlName="priceMin" placeholder="0">
+        </mat-form-field>
+        <span class="price-separator">-</span>
+        <mat-form-field appearance="outline" class="price-input">
+          <mat-label>Máx.</mat-label>
+          <input matInput type="number" formControlName="priceMax" placeholder="1000">
+        </mat-form-field>
       </div>
-    </div>
+
+      <div class="filter-actions filter-item">
+        <!-- El botón de aplicar es opcional si se usa valueChanges con debounce -->
+        <!-- <button mat-stroked-button color="primary" (click)="applyFilters()" class="m-r-8">
+          <i-tabler name="player-play" class="icon-20"></i-tabler> Aplicar Filtros
+        </button> -->
+        <button mat-stroked-button (click)="clearFilters()">
+          <i-tabler name="clear-all" class="icon-20"></i-tabler> Limpiar Filtros
+        </button>
+      </div>
+    </form>
   </mat-expansion-panel>
+
+  <div *ngIf="isLoadingBooks" class="loading-indicator margin-top-2">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+      <p>Cargando libros...</p>
+  </div>
+  <div *ngIf="booksError" class="alert alert-danger margin-top-2">
+      {{ booksError }}
+  </div>
+
 
   <!-- Paginador Superior -->
   <mat-paginator 

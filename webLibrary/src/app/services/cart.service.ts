@@ -1,109 +1,139 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+// map operator is not used directly in this refactored version for public observables,
+// but could be useful for derived observables if needed later.
+// import { map } from 'rxjs/operators';
 import { Book } from '../models/book.model';
-import { Cart, CartItem } from '../models/cart.model';
 
-const CART_STORAGE_KEY = 'libreria33_cart';
+// Define Interfaces as per Step 2
+export interface CartItem {
+  book: Book;
+  quantity: number;
+}
+
+export interface Cart { // This interface is for internal consistency if needed, but not directly exposed.
+  items: CartItem[];
+  totalPrice: number;
+  totalItems: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private cartSubject = new BehaviorSubject<Cart>(this.loadInitialCart());
-  public cart$: Observable<Cart> = this.cartSubject.asObservable();
+  private cartKey = 'libreria33_cart'; // Step 3
 
-  constructor() { }
+  // Step 3: BehaviorSubjects
+  private itemsSubject = new BehaviorSubject<CartItem[]>([]);
+  private totalPriceSubject = new BehaviorSubject<number>(0);
+  private totalItemsSubject = new BehaviorSubject<number>(0);
 
-  private loadInitialCart(): Cart {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (storedCart) {
+  // Step 3: Public Observables
+  public items$: Observable<CartItem[]> = this.itemsSubject.asObservable();
+  public totalPrice$: Observable<number> = this.totalPriceSubject.asObservable();
+  public totalItems$: Observable<number> = this.totalItemsSubject.asObservable();
+
+  constructor() { // Step 4
+    this.loadCartFromStorage();
+  }
+
+  // Step 5: Method loadCartFromStorage()
+  private loadCartFromStorage(): void {
+    const storedCartItems = localStorage.getItem(this.cartKey);
+    if (storedCartItems) {
       try {
-        const parsedCart = JSON.parse(storedCart) as Cart;
-        // Validar estructura básica
-        if (parsedCart && Array.isArray(parsedCart.items)) {
-           return parsedCart;
+        const items = JSON.parse(storedCartItems) as CartItem[];
+        // Basic validation: ensure it's an array, and items have book and quantity
+        if (Array.isArray(items) && items.every(item => item.book && typeof item.quantity === 'number')) {
+          this.itemsSubject.next(items);
+          this.updateCartState(); // Calculate totals based on loaded items
+        } else {
+          localStorage.removeItem(this.cartKey); // Clear corrupted data
         }
       } catch (e) {
-        console.error("Error parsing cart from localStorage", e);
-        localStorage.removeItem(CART_STORAGE_KEY); // Limpiar si está corrupto
+        console.error("Error parsing cart items from localStorage", e);
+        localStorage.removeItem(this.cartKey); // Clear if corrupted
       }
     }
-    return { items: [], totalItems: 0, subtotal: 0 };
   }
 
-  private saveCart(cart: Cart): void {
-    this.cartSubject.next(cart);
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  // Step 6: Method saveCartToStorage()
+  private saveCartToStorage(): void {
+    localStorage.setItem(this.cartKey, JSON.stringify(this.itemsSubject.value));
   }
 
-  private calculateCartTotals(items: CartItem[]): { totalItems: number; subtotal: number } {
+  // Step 7: Method updateCartState() (private)
+  private updateCartState(): void {
+    const currentItems = this.itemsSubject.value;
     let totalItems = 0;
-    let subtotal = 0;
-    for (const item of items) {
+    let totalPrice = 0;
+
+    for (const item of currentItems) {
       totalItems += item.quantity;
-      subtotal += item.quantity * item.unitPrice;
+      totalPrice += item.quantity * item.book.price; // Assuming book.price exists
     }
-    return { totalItems, subtotal: parseFloat(subtotal.toFixed(2)) };
+
+    this.totalItemsSubject.next(totalItems);
+    this.totalPriceSubject.next(parseFloat(totalPrice.toFixed(2)));
+    this.saveCartToStorage();
   }
 
-  addItem(book: Book, quantity: number = 1): void {
-    const currentCart = this.cartSubject.getValue();
-    const existingItemIndex = currentCart.items.findIndex(item => item.bookId === book.id);
+  // Step 8: Method addItem(book: Book, quantity: number = 1)
+  public addItem(book: Book, quantity: number = 1): void {
+    if (!book || quantity <= 0) return;
 
-    let updatedItems: CartItem[];
+    const currentItems = [...this.itemsSubject.value];
+    const existingItemIndex = currentItems.findIndex(item => item.book.id === book.id);
+    const stock = book.stock !== undefined ? book.stock : Infinity; // Assume infinite stock if not defined
 
     if (existingItemIndex > -1) {
-      // Actualizar cantidad si el item ya existe
-      updatedItems = currentCart.items.map((item, index) => 
-        index === existingItemIndex 
-          ? { ...item, quantity: item.quantity + quantity } 
-          : item
-      );
+      const existingItem = currentItems[existingItemIndex];
+      const newQuantity = existingItem.quantity + quantity;
+      // Do not add more than available stock
+      currentItems[existingItemIndex].quantity = Math.min(newQuantity, stock);
     } else {
-      // Añadir nuevo item
-      const newItem: CartItem = {
-        bookId: book.id,
-        title: book.title,
-        author: book.author,
-        coverImageUrl: book.coverImageUrl,
-        unitPrice: book.price,
-        quantity: quantity,
-        productUrl: `/libro/${book.id}` // Enlace al detalle del libro
-      };
-      updatedItems = [...currentCart.items, newItem];
+       // Add new item, ensuring quantity does not exceed stock
+      currentItems.push({ book, quantity: Math.min(quantity, stock) });
     }
-    
-    const { totalItems, subtotal } = this.calculateCartTotals(updatedItems);
-    this.saveCart({ items: updatedItems, totalItems, subtotal });
+    this.itemsSubject.next(currentItems);
+    this.updateCartState();
   }
 
-  updateItemQuantity(bookId: string, newQuantity: number): void {
+  // Step 9: Method updateItemQuantity(bookId: number, newQuantity: number)
+  public updateItemQuantity(bookId: number, newQuantity: number): void {
+    const currentItems = [...this.itemsSubject.value];
+    const itemIndex = currentItems.findIndex(item => item.book.id === bookId);
+
+    if (itemIndex === -1) return; // Item not found
+
     if (newQuantity <= 0) {
       this.removeItem(bookId);
-      return;
+    } else {
+      const item = currentItems[itemIndex];
+      const stock = item.book.stock !== undefined ? item.book.stock : Infinity;
+      // Update quantity, ensuring it does not exceed stock
+      currentItems[itemIndex] = { ...item, quantity: Math.min(newQuantity, stock) };
+      this.itemsSubject.next(currentItems);
+      this.updateCartState();
     }
-    const currentCart = this.cartSubject.getValue();
-    const updatedItems = currentCart.items.map(item =>
-      item.bookId === bookId ? { ...item, quantity: newQuantity } : item
-    );
-    const { totalItems, subtotal } = this.calculateCartTotals(updatedItems);
-    this.saveCart({ items: updatedItems, totalItems, subtotal });
   }
 
-  removeItem(bookId: string): void {
-    const currentCart = this.cartSubject.getValue();
-    const updatedItems = currentCart.items.filter(item => item.bookId !== bookId);
-    const { totalItems, subtotal } = this.calculateCartTotals(updatedItems);
-    this.saveCart({ items: updatedItems, totalItems, subtotal });
+  // Step 10: Method removeItem(bookId: number)
+  public removeItem(bookId: number): void {
+    const currentItems = this.itemsSubject.value;
+    const filteredItems = currentItems.filter(item => item.book.id !== bookId);
+    this.itemsSubject.next(filteredItems);
+    this.updateCartState();
   }
 
-  clearCart(): void {
-    this.saveCart({ items: [], totalItems: 0, subtotal: 0 });
+  // Step 11: Method clearCart()
+  public clearCart(): void {
+    this.itemsSubject.next([]);
+    this.updateCartState(); // This will also save the empty cart to storage
   }
 
-  // Selector para el número total de ítems (para el badge del header)
-  getTotalItems(): Observable<number> {
-     return this.cart$.pipe(map(cart => cart.totalItems));
+  // Step 12: (Optional) Method getItem(bookId: number)
+  public getItem(bookId: number): CartItem | undefined {
+    return this.itemsSubject.value.find(item => item.book.id === bookId);
   }
 }
