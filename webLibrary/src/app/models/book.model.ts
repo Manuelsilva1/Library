@@ -1,18 +1,19 @@
 export interface Book {
-  id: number; // Changed from string to number to match backend Long
+  id: number;
   title: string;
   author: string;
-  coverImageUrl: string;
-  price: number;
-  currency?: string; // ej. 'USD', 'EUR'
-  shortDescription?: string;
-  category?: string; 
-  publisher?: string;
-  publishDate?: string; // o Date
-  pages?: number;
   isbn?: string;
+  price: number;
+  stock?: number;
+  category?: string;
+  
+  // Existing UI-specific fields (can remain optional)
+  coverImageUrl?: string;
+  currency?: string; 
+  shortDescription?: string;
+  publisher?: string;
+  publishDate?: string; // or Date
+  pages?: number;
   language?: string;
   additionalImageUrls?: string[];
-  stock?: number; // Campo para el stock
-  // Podrías añadir más campos como rating, ISBN, etc.
 }

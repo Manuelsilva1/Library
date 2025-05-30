@@ -1,0 +1,93 @@
+<div class="pos-container">
+  <h1 class="page-title">Punto de Venta</h1>
+
+  <div class="pos-grid">
+    <!-- Columna Izquierda: Búsqueda y Adición de Libros -->
+    <div class="book-interaction-column">
+      <mat-card>
+        <mat-card-header><mat-card-title>Buscar y Añadir Libros</mat-card-title></mat-card-header>
+        <mat-card-content [formGroup]="bookSearchForm">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Buscar libro por título</mat-label>
+            <input matInput type="text" formControlName="searchTerm" (input)="searchBooks($event)" placeholder="Ej: El Principito">
+            <mat-progress-spinner *ngIf="isLoadingSearch" mode="indeterminate" diameter="20" matSuffix></mat-progress-spinner>
+          </mat-form-field>
+          
+          <div *ngIf="(searchResults$ | async) as books" class="search-results-container">
+            <mat-list *ngIf="books.length > 0">
+              <mat-list-item *ngFor="let book of books" (click)="addBookToSale(book)" class="search-result-item" matRipple>
+                <span matListItemTitle>{{ book.title }}</span>
+                <span matListItemLine class="search-result-details">
+                  {{ book.author }} - Precio: {{ book.price | currency:'USD' }} 
+                  (Stock: {{ book.stock !== undefined ? book.stock : 'N/A' }})
+                </span>
+              </mat-list-item>
+            </mat-list>
+            <p *ngIf="books.length === 0 && bookSearchForm.get('searchTerm')?.value && !isLoadingSearch" class="no-results-message">
+              No se encontraron libros para "{{ bookSearchForm.get('searchTerm')?.value }}".
+            </p>
+          </div>
+
+          <mat-form-field appearance="outline" class="quantity-field">
+            <mat-label>Cantidad a Añadir</mat-label>
+            <input matInput type="number" formControlName="quantity" min="1">
+          </mat-form-field>
+          <p class="hint-text">Selecciona un libro de los resultados para añadirlo con la cantidad especificada.</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Columna Derecha: Venta Actual y Finalización -->
+    <div class="current-sale-column">
+      <mat-card>
+        <mat-card-header><mat-card-title>Venta Actual</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div *ngIf="currentSaleItems.length === 0" class="empty-sale-message">
+            <p>Añade libros para iniciar una venta.</p>
+          </div>
+
+          <mat-list *ngIf="currentSaleItems.length > 0">
+            <mat-list-item *ngFor="let item of currentSaleItems" class="sale-item-display">
+              <div matListItemTitle class="sale-item-title-line">
+                <span>{{ item.title }}</span>
+                <span class="sale-item-price">{{ item.price | currency:'USD' }} c/u</span>
+              </div>
+              <div matListItemLine class="sale-item-quantity-line">
+                Cantidad: 
+                <input type="number" [value]="item.quantity" 
+                       (change)="updateSaleItemQuantity(item.bookId, $event)" 
+                       min="1" [max]="item.currentStock" 
+                       class="quantity-input" aria-label="Cantidad del item">
+                (Stock disponible: {{item.currentStock}})
+              </div>
+              <button mat-icon-button color="warn" (click)="removeSaleItem(item.bookId)" aria-label="Quitar item" class="remove-item-button">
+                <i-tabler name="x" class="icon-18"></i-tabler>
+              </button>
+            </mat-list-item>
+          </mat-list>
+          
+          <mat-divider *ngIf="currentSaleItems.length > 0"></mat-divider>
+          
+          <h3 class="sale-total" *ngIf="currentSaleItems.length > 0">
+            Total Actual: {{ currentSaleTotal | currency:'USD' }}
+          </h3>
+
+          <form [formGroup]="customerForm" class="customer-form">
+             <mat-form-field appearance="outline" class="full-width">
+                 <mat-label>Nombre del Cliente (Opcional)</mat-label>
+                 <input matInput type="text" formControlName="customerName">
+             </mat-form-field>
+          </form>
+
+          <button mat-flat-button color="primary" (click)="finalizeSale()" [disabled]="currentSaleItems.length === 0 || isLoadingSale" class="full-width finalize-button">
+            <span *ngIf="!isLoadingSale">Finalizar Venta</span>
+            <mat-progress-spinner *ngIf="isLoadingSale" mode="indeterminate" diameter="20" class="button-spinner"></mat-progress-spinner>
+          </button>
+
+          <div *ngIf="saleSuccessMessage" class="success-message margin-top-1">{{ saleSuccessMessage }}</div>
+          <div *ngIf="saleErrorMessage" class="error-message margin-top-1">{{ saleErrorMessage }}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

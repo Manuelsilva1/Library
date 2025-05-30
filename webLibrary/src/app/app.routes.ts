@@ -98,7 +98,14 @@ export const routes: Routes = [
           import('./components/admin/book-form/book-form.component').then(m => m.BookFormComponent),
         canActivate: [authGuard], // Aplicar guardia aquí
         data: { title: 'Editar Libro' }
-      }
+      },
+      {
+        path: 'pos', // Point of Sale
+        loadComponent: () => 
+          import('./pages/pos/pos.component').then(m => m.PosComponent),
+        canActivate: [authGuard],
+        data: { title: 'Punto de Venta' }
+      },
     ],
   },
   {

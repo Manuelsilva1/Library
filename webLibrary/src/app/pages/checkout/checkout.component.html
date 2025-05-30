@@ -4,44 +4,28 @@
   <div class="checkout-grid" *ngIf="cartItems.length > 0; else emptyCartMessage">
     <!-- Columna Izquierda: Formularios y Selección -->
     <div class="checkout-forms">
-      <h2 class="section-title">Dirección de Envío</h2>
+      <h2 class="section-title">Detalles del Cliente</h2>
       <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
         <div class="form-grid">
+          <!-- Customer Name Field -->
           <mat-form-field appearance="outline">
-            <mat-label>Línea de Dirección 1</mat-label>
-            <input matInput formControlName="shippingAddressLine1" required>
-            <mat-error *ngIf="checkoutForm.get('shippingAddressLine1')?.hasError('required')">
-              Dirección es requerida
+            <mat-label>Nombre Completo</mat-label>
+            <input matInput formControlName="customerName" required>
+            <mat-error *ngIf="checkoutForm.get('customerName')?.hasError('required')">
+              Tu nombre es requerido
             </mat-error>
           </mat-form-field>
 
+          <!-- Customer Email Field -->
           <mat-form-field appearance="outline">
-            <mat-label>Línea de Dirección 2 (Opcional)</mat-label>
-            <input matInput formControlName="shippingAddressLine2">
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Ciudad</mat-label>
-            <input matInput formControlName="shippingCity" required>
-            <mat-error *ngIf="checkoutForm.get('shippingCity')?.hasError('required')">
-              Ciudad es requerida
+            <mat-label>Correo Electrónico</mat-label>
+            <input matInput type="email" formControlName="customerEmail" required>
+            <mat-error *ngIf="checkoutForm.get('customerEmail')?.hasError('required')">
+              Correo electrónico es requerido
             </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline">
-            <mat-label>Código Postal</mat-label>
-            <input matInput formControlName="shippingPostalCode" required>
-            <mat-error *ngIf="checkoutForm.get('shippingPostalCode')?.hasError('required')">
-              Código Postal es requerido
+            <mat-error *ngIf="checkoutForm.get('customerEmail')?.hasError('email')">
+              Correo electrónico inválido
             </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-             <mat-label>País</mat-label>
-             <input matInput formControlName="shippingCountry" required>
-             <mat-error *ngIf="checkoutForm.get('shippingCountry')?.hasError('required')">
-               País es requerido
-             </mat-error>
           </mat-form-field>
         </div>
 

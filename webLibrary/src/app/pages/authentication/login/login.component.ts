@@ -23,14 +23,15 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]], // Changed from email to username
       password: ['', Validators.required]
       // rememberMe: [false] // Opcional
     });
   }
 
   ngOnInit(): void {
-     if (this.authService.currentUserValue) {
+     // Check if user is already authenticated based on token presence
+     if (this.authService.isAuthenticated()) { // Using isAuthenticated for check
          this.router.navigate(['/']); // Redirigir si ya está logueado
      }
   }
@@ -42,11 +43,12 @@ export class LoginComponent implements OnInit {
     }
     this.isLoading = true;
     this.errorMessage = null;
-    // const { email, password } = this.loginForm.value; // Old way
-    const credentials = this.loginForm.value; // New way, sends {email, password}
+    // The form value will now be {username: '...', password: '...'}
+    // which matches the LoginRequest model.
+    const credentials = this.loginForm.value; 
 
     this.authService.login(credentials).subscribe({
-      next: (user) => {
+      next: (response) => { // Backend returns LoginResponse ({token: string})
         this.isLoading = false;
         this.router.navigate(['/']); // Redirigir a la página principal o a donde sea necesario
       },
