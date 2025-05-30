@@ -41,7 +41,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**").permitAll()
                 // For now, require authentication for sales and orders.
                 .requestMatchers("/api/sales", "/api/sales/**").authenticated()
-                .requestMatchers("/api/orders", "/api/orders/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders", "/api/orders/**").authenticated()
                 .anyRequest().authenticated() // All other requests require authentication
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
