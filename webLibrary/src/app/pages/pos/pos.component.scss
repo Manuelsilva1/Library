@@ -1,0 +1,143 @@
+.pos-container {
+  padding: 20px;
+}
+
+.page-title {
+  margin-bottom: 20px;
+}
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Two equal columns
+  gap: 20px;
+
+  @media (max-width: 960px) { // Stack columns on smaller screens
+    grid-template-columns: 1fr;
+  }
+}
+
+.book-interaction-column, .current-sale-column {
+  mat-card {
+    height: 100%; // Make cards in a row same height
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.quantity-field {
+  max-width: 150px; // Keep quantity field smaller
+  margin-top: 10px;
+}
+
+.hint-text {
+  font-size: 0.9em;
+  color: grey;
+  margin-top: 5px;
+}
+
+.search-results-container {
+  max-height: 300px; // Limit height of search results
+  overflow-y: auto;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.search-result-item {
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.search-result-details {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.no-results-message {
+  padding: 10px;
+  font-style: italic;
+}
+
+.empty-sale-message {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+.sale-item-display {
+  .sale-item-title-line {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .sale-item-price {
+    font-size: 0.9em;
+    color: #333;
+  }
+  .sale-item-quantity-line {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+  }
+  .quantity-input {
+    width: 50px;
+    margin: 0 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
+}
+
+.remove-item-button {
+  margin-left: auto; // Pushes button to the right if item content is wrapped
+}
+
+.sale-total {
+  margin-top: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: right;
+}
+
+.customer-form {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.finalize-button {
+    margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  background-color: #e6ffed;
+  border: 1px solid green;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.error-message {
+  color: red;
+  background-color: #ffebee;
+  border: 1px solid red;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.margin-top-1 {
+    margin-top: 1rem;
+}
+
+.button-spinner {
+    display: inline-block;
+    vertical-align: middle;
+}

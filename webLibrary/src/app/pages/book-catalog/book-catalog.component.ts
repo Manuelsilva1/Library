@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import FormBuilder, FormGroup
 import { MaterialModule } from 'src/app/material.module';
 import { BookCardComponent } from '../../components/book-card/book-card.component';
-import { BookService, Filters } from '../../services/book.service';
+import { BookService } from '../../services/book.service'; // Removed Filters import
 import { Book } from '../../models/book.model';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject, Subscription } from 'rxjs'; // Import Subscription
@@ -82,22 +82,22 @@ export class BookCatalogComponent implements OnInit {
     this.destroy$.complete();
   }
 
-  loadBooks(filters: Filters): void {
+  loadBooks(filters: any): void { // Changed Filters to any for flexibility, or define a proper interface
     this.isLoadingBooks = true;
     this.booksError = null;
-    // BookService espera página 1-indexed
-    this.bookService.getBooks(filters, this.currentPage, this.pageSize)
+    // BookService.getBooks expects 0-indexed page
+    this.bookService.getBooks(filters, this.currentPage - 1, this.pageSize) 
       .subscribe({
-        next: response => {
-          this.books = response.books;
-          this.totalBooks = response.total;
+        next: response => { // response is BookPage
+          this.books = response.content;
+          this.totalBooks = response.totalElements;
           this.isLoadingBooks = false;
         },
         error: err => {
           this.booksError = err.message || 'Error al cargar los libros.';
           this.isLoadingBooks = false;
-          this.books = [];
-          this.totalBooks = 0;
+          this.books = []; // Clear books on error
+          this.totalBooks = 0; // Reset total on error
         }
       });
   }
@@ -122,11 +122,14 @@ export class BookCatalogComponent implements OnInit {
     this.currentPage = 1; // Reset page to 1 when filters change
     const rawFilters = this.filterForm.value;
     
-    // Clean up filters: remove null, undefined, or empty string values
-    const activeFilters: Filters = {};
+    const activeFilters: any = {}; // Using 'any' for flexibility
     Object.entries(rawFilters).forEach(([key, value]) => {
       if (value !== null && value !== undefined && String(value).trim() !== '') {
-        activeFilters[key as keyof Filters] = value as any;
+        if (key === 'searchTerm') {
+          activeFilters['title'] = String(value).trim(); // Map searchTerm to title
+        } else {
+          activeFilters[key] = value;
+        }
       }
     });
 
@@ -147,9 +150,21 @@ export class BookCatalogComponent implements OnInit {
   }
 
   handlePageEvent(event: PageEvent): void {
-    this.currentPage = event.pageIndex + 1; // MatPaginator is 0-indexed
+    this.currentPage = event.pageIndex + 1; // MatPaginator pageIndex is 0-indexed, this.currentPage becomes 1-indexed
     this.pageSize = event.pageSize;
-    // Filters are taken from the form, so just load books for the new page
-    this.loadBooks(this.filterForm.value as Filters);
+    // Filters are taken from the form (which should have 'title' if searchTerm was used)
+    // Need to re-apply the mapping from form's searchTerm to filter's title if not already done
+    const rawFilters = this.filterForm.value;
+    const activeFilters: any = {};
+    Object.entries(rawFilters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && String(value).trim() !== '') {
+        if (key === 'searchTerm') {
+          activeFilters['title'] = String(value).trim();
+        } else {
+          activeFilters[key] = value;
+        }
+      }
+    });
+    this.loadBooks(activeFilters);
   }
 }

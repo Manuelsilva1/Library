@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { BookService } from '../../../services/book.service'; // Ajusta la ruta si es necesario
-import { Book } from '../../../models/book.model'; // Ajusta la ruta si es necesario
+import { BookService } from '../../../services/book.service';
+import { Book } from '../../../models/book.model';
+import { BookPage } from '../../../models/book-page.model'; // Import BookPage
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../../../material.module'; // Para UI
+import { MaterialModule } from '../../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -20,7 +21,7 @@ export class AdminBookListComponent implements OnInit {
   errorMessage: string | null = null;
 
   // Paginación
-  currentPage: number = 1; // MatPaginator es 0-indexed, pero BookService espera 1-indexed
+  currentPage: number = 1; // Component uses 1-indexed for currentPage state
   pageSize: number = 10;
   totalBooks: number = 0;
   pageSizeOptions = [5, 10, 25, 100];
@@ -38,11 +39,11 @@ export class AdminBookListComponent implements OnInit {
   loadBooks(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    // BookService.getBooks espera página 1-indexed, MatPaginator devuelve 0-indexed
-    this.bookService.getBooks({}, this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        this.books = response.books;
-        this.totalBooks = response.total;
+    // BookService.getBooks expects 0-indexed page
+    this.bookService.getBooks({}, this.currentPage - 1, this.pageSize).subscribe({
+      next: (response: BookPage) => { // Type the response
+        this.books = response.content; // Use response.content
+        this.totalBooks = response.totalElements; // Use response.totalElements
         this.isLoading = false;
       },
       error: (err) => {
@@ -87,7 +88,7 @@ export class AdminBookListComponent implements OnInit {
   }
 
   handlePageEvent(event: PageEvent): void {
-    this.currentPage = event.pageIndex + 1; // Convert 0-indexed to 1-indexed for service
+    this.currentPage = event.pageIndex + 1; // MatPaginator's pageIndex is 0-indexed, component's currentPage is 1-indexed
     this.pageSize = event.pageSize;
     this.loadBooks();
   }
